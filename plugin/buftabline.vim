@@ -15,31 +15,25 @@ hi default link BufTabLineActive  PmenuSel
 hi default link BufTabLineHidden  TabLine
 hi default link BufTabLineFill    TabLineFill
 
-function! s:is_scratch(bufnum)
-	return -1 != index(['nofile','acwrite'], getbufvar(a:bufnum, '&buftype'), 0, 1)
-endfunction
-
-function! s:user_buffers() " help buffers are always unlisted, but quickfix windows are not
-	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
-endfunction
-
 let s:prev_currentbuf = winbufnr(0)
 function! BufTabLine()
 	let tabs = []
 
+	" pick out user buffers (help buffers are always unlisted, but quickfix buffers are not)
+	let bufnums = filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
+
 	" pick up data on all the buffers
-	let bufnums = s:user_buffers()
 	let currentbuf = winbufnr(0)
 	for bufnum in bufnums
-		let bufpath    = bufname(bufnum)
-		let bufactive  = bufwinnr(bufnum) > 0
-		let tab = {
-			\ 'num'    : bufnum,
-			\ 'head'   : strlen(bufpath) ? fnamemodify(bufpath, ':p:~:.:h') : '',
-			\ 'tail'   : strlen(bufpath) ? fnamemodify(bufpath, ':t') : '',
-			\ 'label'  : strlen(bufpath) ? '' : s:is_scratch(bufnum) ? ' ! ' : ' * ',
-			\ 'hilite' : currentbuf == bufnum ? 'Current' : bufactive ? 'Active' : 'Hidden',
-			\ }
+		let tab = { 'num': bufnum, 'head': '', 'tail': '', 'label': '', 'hilite': '' }
+		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
+		let bufpath = bufname(bufnum)
+		if strlen(bufpath)
+			let tab.head = fnamemodify(bufpath, ':p:~:.:h')
+			let tab.tail = fnamemodify(bufpath, ':t')
+		else " scratch buffer or unnamed file?
+			let tab.label = -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) ? ' ! ' : ' * '
+		endif
 		let tabs += [tab]
 	endfor
 
