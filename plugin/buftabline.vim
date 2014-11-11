@@ -23,9 +23,6 @@
 
 scriptencoding utf-8
 
-augroup BufTabLine
-autocmd!
-
 hi default link BufTabLineCurrent TabLineSel
 hi default link BufTabLineActive  PmenuSel
 hi default link BufTabLineHidden  TabLine
@@ -126,18 +123,53 @@ function! BufTabLine()
 		endfor
 	endif
 
+	return join(map(tabs,'printf("%%%dT%%#BufTabLine%s#%s",v:val.num,v:val.hilite,v:val.label)'),'') . '%T%#BufTabLineFill#'
 	return '%T' . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,v:val.label)'),'') . '%#BufTabLineFill#'
 endfunction
 
-function! s:setup()
-	if tabpagenr('$') == 1
-		set guioptions-=e tabline=%!BufTabLine()
-	else
-		set guioptions+=e tabline=
-	endif
+"function! s:setup()
+"	if tabpagenr('$') == 1
+"		set guioptions-=e tabline=%!BufTabLine()
+"	else
+"		set guioptions+=e tabline=
+"	endif
+"endfunction
+"
+"autocmd TabEnter * call <SID>setup()
+"
+"set showtabline=2
+"call s:setup()
+
+" we need an unlisted buffer to set auto-created tabs to
+noautocmd enew
+let s:placeholder = bufnr('%')
+f /dev/null
+setl buftype=nofile nobuflisted
+bunload!
+exe 'noautocmd buffer' s:placeholder
+while tabpagenr('$') < bufnr('$') | exe 'noautocmd tab sbuffer' s:placeholder | endwhile
+exe 'buffer' s:placeholder == 1 ? 2 : 1
+
+function! s:TabEnter()
+	let n = tabpagenr()
+	exe 'tabnext' s:placeholder
+	if ! bufexists(n) | return | endif
+	let unloaded = ! bufloaded(n)
+	exe 'buffer' n
+	if unloaded | doautocmd BufRead | endif
 endfunction
 
-autocmd TabEnter * call <SID>setup()
+function! s:BufWinEnter()
+	while tabpagenr('$') < bufnr('$')
+		exe 'noautocmd tab sbuffer' s:placeholder
+		exe 'tabnext' s:placeholder
+	endwhile
+endfunction
 
-set showtabline=2
-call s:setup()
+augroup BufTabLine
+autocmd!
+autocmd TabEnter * call <SID>TabEnter()
+autocmd BufWinEnter * call <SID>BufWinEnter()
+autocmd QuitPre * tabonly!
+
+set guioptions-=e showtabline=2 tabline=%!BufTabLine()
