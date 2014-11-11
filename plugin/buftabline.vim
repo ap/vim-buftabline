@@ -17,12 +17,12 @@ hi default link BufTabLineFill    TabLineFill
 
 let s:prev_currentbuf = winbufnr(0)
 function! BufTabLine()
-	let tabs = []
-
 	" pick out user buffers (help buffers are always unlisted, but quickfix buffers are not)
 	let bufnums = filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 
 	" pick up data on all the buffers
+	let tabs = []
+	let tabs_by_tail = {}
 	let currentbuf = winbufnr(0)
 	for bufnum in bufnums
 		let tab = { 'num': bufnum, 'head': '', 'tail': '', 'label': '', 'hilite': '' }
@@ -31,6 +31,9 @@ function! BufTabLine()
 		if strlen(bufpath)
 			let tab.head = fnamemodify(bufpath, ':p:~:.:h')
 			let tab.tail = fnamemodify(bufpath, ':t')
+			let tab.label = ' ' . tab.tail . ' '
+			let group = get(tabs_by_tail, tab.tail, []) + [tab]
+			let tabs_by_tail[tab.tail] = group
 		else " scratch buffer or unnamed file?
 			let tab.label = -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) ? ' ! ' : ' * '
 		endif
@@ -38,13 +41,6 @@ function! BufTabLine()
 	endfor
 
 	" disambiguate same-basename files by adding trailing path segments
-	let tabs_by_tail = {}
-	for tab in tabs
-		if strlen(tab.label) | continue | endif
-		let tab.label = ' ' . tab.tail . ' '
-		let group = get(tabs_by_tail, tab.tail, []) + [tab]
-		let tabs_by_tail[tab.tail] = group
-	endfor
 	while 1
 		let groups = filter(values(tabs_by_tail),'len(v:val) > 1')
 		if ! len(groups) | break | endif
