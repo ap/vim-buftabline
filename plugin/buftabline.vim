@@ -3,6 +3,7 @@
 " buftabs http://www.vim.org/scripts/script.php?script_id=1664
 " airline http://www.vim.org/scripts/script.php?script_id=4661
 " BufLine http://www.vim.org/scripts/script.php?script_id=4940
+" wintabs https://github.com/zefei/vim-wintabs
 
 scriptencoding utf-8
 
