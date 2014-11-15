@@ -120,4 +120,4 @@ too simplistic for your preferences.
 https://github.com/ap/vim-buftabline
 
 
-vim:tw=78:et:ft=help:fenc=utf-8:norl:
+vim:tw=78:et:ft=help:norl:
