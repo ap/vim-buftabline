@@ -32,8 +32,7 @@ function! BufTabLine()
 			let tab.head = fnamemodify(bufpath, ':p:~:.:h')
 			let tab.tail = fnamemodify(bufpath, ':t')
 			let tab.label = ' ' . tab.tail . ' '
-			let group = get(tabs_by_tail, tab.tail, []) + [tab]
-			let tabs_by_tail[tab.tail] = group
+			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
 		else " scratch buffer or unnamed file?
 			let tab.label = -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) ? ' ! ' : ' * '
 		endif
@@ -52,8 +51,7 @@ function! BufTabLine()
 					let tab.label = ' ' . tab.tail . ' '
 				endif
 				let tab.head = fnamemodify(tab.head, ':h')
-				let group = get(tabs_by_tail, tab.tail, []) + [tab]
-				let tabs_by_tail[tab.tail] = group
+				let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
 			endfor
 		endfor
 	endwhile
