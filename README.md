@@ -28,8 +28,8 @@ Why this and not Vim tabs?
 --------------------------
 
 Vim tabs are not very useful except in very particular circumstances. To
-understand why you have to understand the display in Vim has 3 layers of
-indirection:
+understand why this is, you have to understand that the display in Vim has
+3 layers of indirection:
 
 1. Buffers correspond to files. Not necessarily to files on disk, but in
    potentiality; i.e. a buffer becomes the content of a file when you do `:w`
