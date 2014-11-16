@@ -61,7 +61,7 @@ parts of Vim (such as the help function and the netrw Explorer) that expect to
 be working with windows, not tabs, and so can easily inadvertently shatter the
 illusion.
 
-Now, if you consider what Vim tabs actually are, i.e. viewports, there only
+Now, if you consider what Vim tabs actually are, i.e. viewports, there are only
 very limited circumstances in which you will ever need such functionality, if
 at all.
 
@@ -122,7 +122,7 @@ of their age.
   simple. The code is more than 5 times as long. There are lots of options and
   mappings so despite its limited scope compared to something like MiniBufExpl
   or Airline, it feels like a Big Plugin – one that requires a large up-front
-  commitment. And subjective though this is, I will call its default colours
+  commitment. And subjective though this is, I will call its default colors
   ugly (while the ones in Buftabline depend entirely on your colorscheme), nor
   does it make any attempt to harmonise with the user colorscheme.
 
@@ -132,8 +132,8 @@ of their age.
   in addition to buffers, and tries to implement a functionality that is not
   native to Vim tabs: scoping buffers to certain tabs. This means it also
   needs to hook into sessions in order to support them, which it does. All in
-  all, if you want to use Vim tabs, this is probably the best plugin for you –
-  Buftabline will be too simplistic for your preferences.
+  all, if you want to use Vim tabs (i.e. viewports), this is probably the best
+  plugin for you – Buftabline will be too simplistic for your preferences.
 
 <!-- vim: et fenc=utf8
 -->
