@@ -31,10 +31,13 @@ hi default link BufTabLineActive  PmenuSel
 hi default link BufTabLineHidden  TabLine
 hi default link BufTabLineFill    TabLineFill
 
+function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
+	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
+endfunction
+
 let s:prev_currentbuf = winbufnr(0)
 function! buftabline#render()
-	" pick out user buffers (help buffers are always unlisted, but quickfix buffers are not)
-	let bufnums = filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
+	let bufnums = buftabline#user_buffers()
 
 	" pick up data on all the buffers
 	let tabs = []
@@ -129,15 +132,26 @@ function! buftabline#render()
 	return '%T' . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,v:val.label)'),'') . '%#BufTabLineFill#'
 endfunction
 
-function! buftabline#update()
-	if tabpagenr('$') == 1
-		set guioptions-=e tabline=%!buftabline#render()
-	else
-		set guioptions+=e tabline=
+function! buftabline#update(deletion)
+	set tabline=
+	if tabpagenr('$') > 1 | set guioptions+=e showtabline=2 | return | endif
+	set guioptions-=e
+	let show = exists('g:buftabline_show') ? g:buftabline_show : 2
+	if 0 == show
+		set showtabline=1
+		return
+	elseif 1 == show
+		" BufDelete triggers before buffer is deleted, so count is too high
+		let total = len(buftabline#user_buffers()) - ( a:deletion ? 1 : 0 )
+		let &g:showtabline = 1 + ( total > 1 )
+	elseif 2 == show
+		set showtabline=2
 	endif
+	set tabline=%!buftabline#render()
 endfunction
 
-autocmd TabEnter * call buftabline#update()
+autocmd BufAdd    * call buftabline#update(0)
+autocmd BufDelete * call buftabline#update(1)
+autocmd TabEnter  * call buftabline#update(0)
 
-set showtabline=2
-call buftabline#update()
+call buftabline#update(0)

@@ -2,8 +2,8 @@
 ================================================================
 
 Buftabline takes over the `tabline` and renders the buffer list in it instead
-of a tab list. It is designed with the ideal that it should Just Work, and has
-no configurable behaviour: drop it into your configuration and you’re done.
+of a tab list. It is designed with the ideal that it should Just Work: drop it
+into your setup and you're done. There is only minimal configurable behavior.
 
 
 Buffer basics

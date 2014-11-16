@@ -6,7 +6,8 @@
 0. Contents                                                         *buftabline*
 
     1. Intro ....................................... |buftabline-intro|
-    2. Tab coloring and colorscheme support ........ |buftabline-colors|
+    2. Configuration settings ...................... |buftabline-config|
+    3. Tab coloring and colorscheme support ........ |buftabline-colors|
     4. Source ...................................... |buftabline-source|
 
 
@@ -14,12 +15,29 @@
 1. Intro                                                      *buftabline-intro*
 
 This plugin takes over the 'tabline' and renders the buffer list in it instead
-of a tab list. It is designed with the ideal that it should Just Work, and has
-no configurable behaviour: drop it into your configuration and you're done.
+of a tab list. It is designed with the ideal that it should Just Work: drop it
+into your setup and you're done. There is only minimal configurable behavior.
 
 
 ==============================================================================
-2. Tab coloring and colorscheme support                      *buftabline-colors*
+2. Configuration settings                                    *buftabline-config*
+
+*g:buftabline_show*    number (default 2)
+
+    The value of this option specifies when the line with buffer labels will
+    be displayed:
+             0: never
+             1: only if there are at least two buffers
+             2: always
+    This is analogous to the 'showtabline' setting, only for the |buftabline|.
+
+    Changing this setting at runtime will not take effect immediately, unless
+    you force an update: >
+            :call buftabline#update(0)
+<
+
+==============================================================================
+3. Tab coloring and colorscheme support                      *buftabline-colors*
 
 This plugin uses several custom highlight groups to render the buffer tabs.
 The custom groups are linked to several other built-in Vim highlight groups
@@ -42,7 +60,7 @@ The highlight groups and their default links are as follows:
 
 
 ==============================================================================
-3. Source                                                    *buftabline-source*
+4. Source                                                    *buftabline-source*
 
 https://github.com/ap/vim-buftabline
 
