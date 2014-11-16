@@ -141,8 +141,13 @@ function! buftabline#update(deletion)
 		set showtabline=1
 		return
 	elseif 1 == show
-		" BufDelete triggers before buffer is deleted, so count is too high
-		let total = len(buftabline#user_buffers()) - ( a:deletion ? 1 : 0 )
+		let bufnums = buftabline#user_buffers()
+		let total = len(bufnums)
+		if a:deletion && -1 < index(bufnums, bufnr('%'))
+			" BufDelete triggers before buffer is deleted
+			" so if current buffer is a user buffer, it must be subtracted
+			let total -= 1
+		endif
 		let &g:showtabline = 1 + ( total > 1 )
 	elseif 2 == show
 		set showtabline=2
