@@ -32,7 +32,7 @@ hi default link BufTabLineHidden  TabLine
 hi default link BufTabLineFill    TabLineFill
 
 let s:prev_currentbuf = winbufnr(0)
-function! BufTabLine()
+function! buftabline#render()
 	" pick out user buffers (help buffers are always unlisted, but quickfix buffers are not)
 	let bufnums = filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 
@@ -129,15 +129,15 @@ function! BufTabLine()
 	return '%T' . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,v:val.label)'),'') . '%#BufTabLineFill#'
 endfunction
 
-function! s:setup()
+function! buftabline#update()
 	if tabpagenr('$') == 1
-		set guioptions-=e tabline=%!BufTabLine()
+		set guioptions-=e tabline=%!buftabline#render()
 	else
 		set guioptions+=e tabline=
 	endif
 endfunction
 
-autocmd TabEnter * call <SID>setup()
+autocmd TabEnter * call buftabline#update()
 
 set showtabline=2
-call s:setup()
+call buftabline#update()
