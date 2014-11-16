@@ -37,6 +37,9 @@ endfunction
 
 let s:prev_currentbuf = winbufnr(0)
 function! buftabline#render()
+	let show_num = exists('g:buftabline_numbers')    ? g:buftabline_numbers    : 0
+	let show_mod = exists('g:buftabline_indicators') ? g:buftabline_indicators : 0
+
 	let bufnums = buftabline#user_buffers()
 
 	" pick up data on all the buffers
@@ -50,10 +53,15 @@ function! buftabline#render()
 		if strlen(bufpath)
 			let tab.head = fnamemodify(bufpath, ':p:~:.:h')
 			let tab.tail = fnamemodify(bufpath, ':t')
-			let tab.label = ' ' . tab.tail . ' '
+			let tab.pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . ( show_num ? bufnum : '' )
+			if strlen(tab.pre) | let tab.pre .= ' ' | endif
+			let tab.label = ' ' . tab.pre . tab.tail . ' '
 			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
-		else " scratch buffer or unnamed file?
-			let tab.label = -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) ? ' ! ' : ' * '
+		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
+			let tab.label = ( show_num ? ' ' . bufnum . ' ! ' : ' ! ' )
+		else " unnamed file
+			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? ' +' : ' ' )
+						\ . ( show_num ? bufnum . ' ' : '* ' )
 		endif
 		let tabs += [tab]
 	endfor
@@ -67,7 +75,7 @@ function! buftabline#render()
 			for tab in group
 				if strlen(tab.head) && tab.head != '.'
 					let tab.tail = fnamemodify(tab.head, ':t') . '/' . tab.tail
-					let tab.label = ' ' . tab.tail . ' '
+					let tab.label = ' ' . tab.pre . tab.tail . ' '
 				endif
 				let tab.head = fnamemodify(tab.head, ':h')
 				let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]

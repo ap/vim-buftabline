@@ -22,7 +22,12 @@ into your setup and you're done. There is only minimal configurable behavior.
 ==============================================================================
 2. Configuration settings                                    *buftabline-config*
 
-*g:buftabline_show*    number (default 2)
+Changes to any of the plugin's configuration settings at runtime will not take
+effect immediately unless you force an update: >
+    :call buftabline#update(0)
+<
+
+*g:buftabline_show*          number (default 2)
 
     The value of this option specifies when the line with buffer labels will
     be displayed:
@@ -31,10 +36,17 @@ into your setup and you're done. There is only minimal configurable behavior.
              2: always
     This is analogous to the 'showtabline' setting, only for the |buftabline|.
 
-    Changing this setting at runtime will not take effect immediately, unless
-    you force an update: >
-            :call buftabline#update(0)
-<
+
+*g:buftabline_numbers*       boolean (default off)
+
+    When on, the buffer number is shown in the buffer label.
+
+
+*g:buftabline_indicators*    boolean (default off)
+
+    When on, the buffer's state is indicated in the buffer label. Currently
+    the only state indicated is whether the buffer is 'modified'.
+
 
 ==============================================================================
 3. Tab coloring and colorscheme support                      *buftabline-colors*
