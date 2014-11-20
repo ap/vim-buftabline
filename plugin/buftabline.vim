@@ -39,6 +39,7 @@ let s:prev_currentbuf = winbufnr(0)
 function! buftabline#render()
 	let show_num = exists('g:buftabline_numbers')    ? g:buftabline_numbers    : 0
 	let show_mod = exists('g:buftabline_indicators') ? g:buftabline_indicators : 0
+	let show_sep = exists('g:buftabline_separator') ? g:buftabline_indicators : 0
 
 	let bufnums = buftabline#user_buffers()
 
@@ -55,7 +56,7 @@ function! buftabline#render()
 			let tab.tail = fnamemodify(bufpath, ':t')
 			let tab.pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . ( show_num ? bufnum : '' )
 			if strlen(tab.pre) | let tab.pre .= ' ' | endif
-			let tab.label = ' ' . tab.pre . tab.tail . ' '
+			let tab.label = '' . tab.pre . tab.tail . (show_sep ? '|' : ' ')
 			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = ( show_num ? ' ' . bufnum . ' ! ' : ' ! ' )
