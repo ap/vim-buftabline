@@ -166,5 +166,4 @@ endfunction
 autocmd BufAdd    * call buftabline#update(0)
 autocmd BufDelete * call buftabline#update(1)
 autocmd TabEnter  * call buftabline#update(0)
-
-call buftabline#update(0)
+autocmd VimEnter  * call buftabline#update(0)
