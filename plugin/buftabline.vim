@@ -39,7 +39,9 @@ let s:prev_currentbuf = winbufnr(0)
 function! buftabline#render()
 	let show_num = exists('g:buftabline_numbers')    ? g:buftabline_numbers    : 0
 	let show_mod = exists('g:buftabline_indicators') ? g:buftabline_indicators : 0
+	let show_sep = exists('g:buftabline_separators') ? g:buftabline_separators : 0
 
+	let lpad = show_sep ? nr2char(0x23B8) : ' '
 	let bufnums = buftabline#user_buffers()
 
 	" pick up data on all the buffers
@@ -55,12 +57,13 @@ function! buftabline#render()
 			let tab.tail = fnamemodify(bufpath, ':t')
 			let tab.pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . ( show_num ? bufnum : '' )
 			if strlen(tab.pre) | let tab.pre .= ' ' | endif
-			let tab.label = ' ' . tab.pre . tab.tail . ' '
+			let tab.label = lpad . tab.pre . tab.tail . ' '
 			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
-			let tab.label = ( show_num ? ' ' . bufnum . ' ! ' : ' ! ' )
+			let tab.label = lpad . ( show_num ? bufnum . ' ! ' : '! ' )
 		else " unnamed file
-			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? ' +' : ' ' )
+			let tab.label = lpad
+						\ . ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
 						\ . ( show_num ? bufnum . ' ' : '* ' )
 		endif
 		let tabs += [tab]
@@ -75,7 +78,7 @@ function! buftabline#render()
 			for tab in group
 				if strlen(tab.head) && tab.head != '.'
 					let tab.tail = fnamemodify(tab.head, ':t') . '/' . tab.tail
-					let tab.label = ' ' . tab.pre . tab.tail . ' '
+					let tab.label = lpad . tab.pre . tab.tail . ' '
 				endif
 				let tab.head = fnamemodify(tab.head, ':h')
 				let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
@@ -136,6 +139,8 @@ function! buftabline#render()
 			endif
 		endfor
 	endif
+
+	let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '')
 
 	return '%T' . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,v:val.label)'),'') . '%#BufTabLineFill#'
 endfunction

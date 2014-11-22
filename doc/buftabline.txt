@@ -48,6 +48,14 @@ effect immediately unless you force an update: >
     the only state indicated is whether the buffer is 'modified'.
 
 
+*g:buftabline_separators*    boolean (default off)
+
+    When on, a vertical line is drawn inbetween tabs. (This is not strictly
+    correct. The effect is actually achieved by replacing the space on the
+    left side of each tab with U+23B8 LEFT VERTICAL BOX LINE. Therefore the
+    separator will be highlighted the same way as the tab to its left.)
+
+
 ==============================================================================
 3. Tab coloring and colorscheme support                      *buftabline-colors*
 
