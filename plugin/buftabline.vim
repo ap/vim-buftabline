@@ -60,7 +60,7 @@ function! buftabline#render()
 			let tab.label = lpad . tab.pre . tab.tail . ' '
 			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
-			let tab.label = lpad . ( show_num ? bufnum . ' ! ' : '! ' )
+			let tab.label = lpad . ( show_num ? show_mod ? '!' . bufnum . ' ' : bufnum . ' ! ' : '! ' )
 		else " unnamed file
 			let tab.label = lpad
 						\ . ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
