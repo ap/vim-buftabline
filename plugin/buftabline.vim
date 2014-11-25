@@ -1,5 +1,6 @@
 " Vim global plugin for rendering the buffer list in the tabline
 " Licence:     The MIT License (MIT)
+" Commit:      $Format:%H$
 " {{{ Copyright (c) 2014 Aristotle Pagaltzis <pagaltzis@gmx.de>
 " 
 " Permission is hereby granted, free of charge, to any person obtaining a copy
