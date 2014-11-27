@@ -146,7 +146,7 @@ function! buftabline#render()
 		endfor
 	endif
 
-	let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '')
+	if len(tabs) | let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '') | endif
 
 	return '%T' . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,v:val.label)'),'') . '%#BufTabLineFill#'
 endfunction
