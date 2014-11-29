@@ -87,8 +87,8 @@ function! buftabline#render()
 			for tab in group
 				if strlen(tab.head) && tab.head != '.'
 					let tab.tail = fnamemodify(tab.head, ':t') . '/' . tab.tail
+					let tab.head = fnamemodify(tab.head, ':h')
 				endif
-				let tab.head = fnamemodify(tab.head, ':h')
 				let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
 			endfor
 		endfor
