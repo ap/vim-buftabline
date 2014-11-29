@@ -66,8 +66,7 @@ function! buftabline#render()
 			let tab.tail = fnamemodify(bufpath, ':t')
 			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . ( show_num ? bufnum : '' )
 			if strlen(pre) | let pre .= ' ' | endif
-			let tab.fmt   = lpad . pre . '%s' . suf . ' '
-			let tab.label = printf(tab.fmt, tab.tail)
+			let tab.fmt = lpad . pre . '%s' . suf . ' '
 			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = lpad . ( show_num ? show_mod ? '!' . bufnum . ' ' : bufnum . ' ! ' : '! ' )
@@ -88,7 +87,6 @@ function! buftabline#render()
 			for tab in group
 				if strlen(tab.head) && tab.head != '.'
 					let tab.tail = fnamemodify(tab.head, ':t') . '/' . tab.tail
-					let tab.label = printf(tab.fmt, tab.tail)
 				endif
 				let tab.head = fnamemodify(tab.head, ':h')
 				let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
@@ -113,6 +111,7 @@ function! buftabline#render()
 	" 3. sum the string lengths for the left and right halves
 	let currentside = lft
 	for tab in tabs
+		if has_key(tab, 'fmt') | let tab.label = printf(tab.fmt, tab.tail) | endif
 		let tab.width = strwidth(tab.label)
 		if currentbuf == tab.num
 			let halfwidth = tab.width / 2
