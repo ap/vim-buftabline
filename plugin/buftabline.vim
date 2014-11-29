@@ -59,7 +59,8 @@ function! buftabline#render()
 		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
-			let tab.head = fnamemodify(bufpath, ':p:~:.:h')
+			let bufpath = substitute(fnamemodify(bufpath, ':p:~:.'), '/$', '', '')
+			let tab.head = fnamemodify(bufpath, ':h')
 			let tab.tail = fnamemodify(bufpath, ':t')
 			let tab.pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . ( show_num ? bufnum : '' )
 			if strlen(tab.pre) | let tab.pre .= ' ' | endif
