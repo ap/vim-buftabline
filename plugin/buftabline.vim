@@ -60,13 +60,14 @@ function! buftabline#render()
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
 			let bufpath = fnamemodify(bufpath, ':p:~:.')
-			let tab.suf = isdirectory(bufpath) ? '/' : ''
-			if strlen(tab.suf) | let bufpath = fnamemodify(bufpath, ':h') | endif
+			let suf = isdirectory(bufpath) ? '/' : ''
+			if strlen(suf) | let bufpath = fnamemodify(bufpath, ':h') | endif
 			let tab.head = fnamemodify(bufpath, ':h')
 			let tab.tail = fnamemodify(bufpath, ':t')
-			let tab.pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . ( show_num ? bufnum : '' )
-			if strlen(tab.pre) | let tab.pre .= ' ' | endif
-			let tab.label = lpad . tab.pre . tab.tail . tab.suf . ' '
+			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . ( show_num ? bufnum : '' )
+			if strlen(pre) | let pre .= ' ' | endif
+			let tab.fmt   = lpad . pre . '%s' . suf . ' '
+			let tab.label = printf(tab.fmt, tab.tail)
 			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = lpad . ( show_num ? show_mod ? '!' . bufnum . ' ' : bufnum . ' ! ' : '! ' )
@@ -87,7 +88,7 @@ function! buftabline#render()
 			for tab in group
 				if strlen(tab.head) && tab.head != '.'
 					let tab.tail = fnamemodify(tab.head, ':t') . '/' . tab.tail
-					let tab.label = lpad . tab.pre . tab.tail . tab.suf . ' '
+					let tab.label = printf(tab.fmt, tab.tail)
 				endif
 				let tab.head = fnamemodify(tab.head, ':h')
 				let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
