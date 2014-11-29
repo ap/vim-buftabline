@@ -55,7 +55,7 @@ function! buftabline#render()
 	let tabs_by_tail = {}
 	let currentbuf = winbufnr(0)
 	for bufnum in bufnums
-		let tab = { 'num': bufnum, 'head': '', 'tail': '', 'label': '', 'hilite': '' }
+		let tab = { 'num': bufnum }
 		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
