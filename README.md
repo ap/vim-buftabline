@@ -107,6 +107,10 @@ of their age.
 
   I used this for a long time.
 
+* [bufferline](https://github.com/bling/vim-bufferline)
+
+  Essentially a newer rendition of buftabs.
+
 * [Airline](http://www.vim.org/scripts/script.php?script_id=4661)
 
   If you already use Airline, you do not need Buftabline: the functionality
