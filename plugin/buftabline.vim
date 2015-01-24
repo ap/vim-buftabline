@@ -59,7 +59,7 @@ function! buftabline#render()
 		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
-			let bufpath = fnamemodify(bufpath, ':p:~:.')
+			let bufpath = substitute(fnamemodify(bufpath, ':p:~:.'), '^$', '.', '')
 			let suf = isdirectory(bufpath) ? '/' : ''
 			if strlen(suf) | let bufpath = fnamemodify(bufpath, ':h') | endif
 			let tab.head = fnamemodify(bufpath, ':h')
