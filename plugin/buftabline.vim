@@ -37,17 +37,21 @@ hi default link BufTabLineActive  PmenuSel
 hi default link BufTabLineHidden  TabLine
 hi default link BufTabLineFill    TabLineFill
 
+let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
+let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
+let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
+let g:buftabline_show       = get(g:, 'buftabline_show',       2)
+
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 endfunction
 
 let s:prev_currentbuf = winbufnr(0)
 function! buftabline#render()
-	let show_num = exists('g:buftabline_numbers')    ? g:buftabline_numbers    : 0
-	let show_mod = exists('g:buftabline_indicators') ? g:buftabline_indicators : 0
-	let show_sep = exists('g:buftabline_separators') ? g:buftabline_separators : 0
+	let show_num = g:buftabline_numbers
+	let show_mod = g:buftabline_indicators
+	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
 
-	let lpad = show_sep ? nr2char(0x23B8) : ' '
 	let bufnums = buftabline#user_buffers()
 
 	" pick up data on all the buffers
@@ -158,11 +162,10 @@ function! buftabline#update(deletion)
 	set tabline=
 	if tabpagenr('$') > 1 | set guioptions+=e showtabline=2 | return | endif
 	set guioptions-=e
-	let show = exists('g:buftabline_show') ? g:buftabline_show : 2
-	if 0 == show
+	if 0 == g:buftabline_show
 		set showtabline=1
 		return
-	elseif 1 == show
+	elseif 1 == g:buftabline_show
 		let bufnums = buftabline#user_buffers()
 		let total = len(bufnums)
 		if a:deletion && -1 < index(bufnums, bufnr('%'))
@@ -171,7 +174,7 @@ function! buftabline#update(deletion)
 			let total -= 1
 		endif
 		let &g:showtabline = 1 + ( total > 1 )
-	elseif 2 == show
+	elseif 2 == g:buftabline_show
 		set showtabline=2
 	endif
 	set tabline=%!buftabline#render()
