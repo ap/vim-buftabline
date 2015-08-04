@@ -22,8 +22,8 @@
 " THE SOFTWARE.
 " }}}
 
-if v:version < 700
-	echoerr printf('Vim 7 is required for buftabline (this is only %d.%d)',v:version/100,v:version%100)
+if v:version < 703
+	echoerr printf('Vim 7.3 is required for buftabline (this is only %d.%d)',v:version/100,v:version%100)
 	finish
 endif
 
