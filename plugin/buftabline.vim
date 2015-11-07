@@ -48,7 +48,8 @@ endfunction
 
 let s:prev_currentbuf = winbufnr(0)
 function! buftabline#render()
-	let show_num = g:buftabline_numbers
+	let show_num = g:buftabline_numbers == 1
+	let show_ord = g:buftabline_numbers == 2
 	let show_mod = g:buftabline_indicators
 	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
 
@@ -58,7 +59,9 @@ function! buftabline#render()
 	let tabs = []
 	let tabs_by_tail = {}
 	let currentbuf = winbufnr(0)
+	let screen_num = 0
 	for bufnum in bufnums
+		let screen_num = show_num ? bufnum : show_ord ? screen_num + 1 : ''
 		let tab = { 'num': bufnum }
 		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
 		let bufpath = bufname(bufnum)
@@ -68,15 +71,15 @@ function! buftabline#render()
 			if strlen(suf) | let bufpath = fnamemodify(bufpath, ':h') | endif
 			let tab.head = fnamemodify(bufpath, ':h')
 			let tab.tail = fnamemodify(bufpath, ':t')
-			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . ( show_num ? bufnum : '' )
+			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . screen_num
 			if strlen(pre) | let pre .= ' ' | endif
 			let tab.fmt = pre . '%s' . suf
 			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
-			let tab.label = ( show_num ? show_mod ? '!' . bufnum : bufnum . ' !' : '!' )
+			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
 		else " unnamed file
 			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
-			\             . ( show_num ? bufnum : '*' )
+			\             . ( screen_num ? screen_num : '*' )
 		endif
 		let tabs += [tab]
 	endfor

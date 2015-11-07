@@ -37,9 +37,15 @@ effect immediately unless you force an update: >
     This is analogous to the 'showtabline' setting, only for the |buftabline|.
 
 
-*g:buftabline_numbers*       boolean (default off)
+*g:buftabline_numbers*       number (default 0)
 
-    When on, the buffer number is shown in the buffer label.
+    The value of this option specifies how to number the buffer labels:
+             0: no numbering
+             1: buffer number
+             2: ordinal number
+    The buffer number corresponds to Vim's internal buffer number as shown by
+    the |:ls| command, whereas the ordinal number is a simple sequential count
+    from left to right.
 
 
 *g:buftabline_indicators*    boolean (default off)
