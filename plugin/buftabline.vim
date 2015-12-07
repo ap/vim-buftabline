@@ -37,10 +37,11 @@ hi default link BufTabLineActive  PmenuSel
 hi default link BufTabLineHidden  TabLine
 hi default link BufTabLineFill    TabLineFill
 
-let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
-let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
-let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
-let g:buftabline_show       = get(g:, 'buftabline_show',       2)
+let g:buftabline_numbers        = get(g:, 'buftabline_numbers',         0)
+let g:buftabline_indicators     = get(g:, 'buftabline_indicators',      0)
+let g:buftabline_separators     = get(g:, 'buftabline_separators',      0)
+let g:buftabline_show           = get(g:, 'buftabline_show',            2)
+let g:buftabline_unnamedbufname = get(g:, 'buftabline_unnamedbufname', '')
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -48,10 +49,11 @@ endfunction
 
 let s:prev_currentbuf = winbufnr(0)
 function! buftabline#render()
-	let show_num = g:buftabline_numbers == 1
-	let show_ord = g:buftabline_numbers == 2
-	let show_mod = g:buftabline_indicators
-	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
+	let show_num        =  g:buftabline_numbers == 1
+	let show_ord        =  g:buftabline_numbers == 2
+	let show_mod        =  g:buftabline_indicators
+	let lpad            =  g:buftabline_separators ? nr2char(0x23B8) : ' '
+	let unnamedbufname  =  g:buftabline_unnamedbufname
 
 	let bufnums = buftabline#user_buffers()
 
@@ -78,8 +80,13 @@ function! buftabline#render()
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
 		else " unnamed file
-			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
-			\             . ( screen_num ? screen_num : '*' )
+			if screen_num
+				let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
+				\             . screen_num . (strlen(unnamedbufname) ? ' ' . unnamedbufname : '')
+			else
+				let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
+				\             . (strlen(unnamedbufname) ? unnamedbufname : '*')
+			endif
 		endif
 		let tabs += [tab]
 	endfor

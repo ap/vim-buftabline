@@ -61,6 +61,10 @@ effect immediately unless you force an update: >
     left side of each tab with U+23B8 LEFT VERTICAL BOX LINE. Therefore the
     separator will be highlighted the same way as the tab to its left.)
 
+*g:buftabline_unnamedbufname*    string (default '')
+
+    When an unnamed buffer is opened, what would be displayed as the title for
+    the document.
 
 ==============================================================================
 3. Tab coloring and colorscheme support                      *buftabline-colors*
