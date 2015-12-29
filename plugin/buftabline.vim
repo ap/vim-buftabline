@@ -22,11 +22,6 @@
 " THE SOFTWARE.
 " }}}
 
-if v:version < 703 " because of strwidth()
-	echoerr printf('Vim 7.3 is required for buftabline (this is only %d.%d)',v:version/100,v:version%100)
-	finish
-endif
-
 scriptencoding utf-8
 
 augroup BufTabLine
@@ -42,6 +37,16 @@ let g:buftabline_indicators     = get(g:, 'buftabline_indicators',      0)
 let g:buftabline_separators     = get(g:, 'buftabline_separators',      0)
 let g:buftabline_show           = get(g:, 'buftabline_show',            2)
 let g:buftabline_unnamedbufname = get(g:, 'buftabline_unnamedbufname', '')
+
+if exists('*strwidth')
+    function! buftabline#strwidth(expr)
+        return strwidth(a:expr)
+    endfunction
+else
+    function! buftabline#strwidth(expr)
+        return strlen(a:expr)
+    endfunction
+endif
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -125,7 +130,7 @@ function! buftabline#render()
 	let currentside = lft
 	for tab in tabs
 		let tab.label = lpad . ( has_key(tab, 'fmt') ? printf(tab.fmt, tab.tail) : tab.label ) . ' '
-		let tab.width = strwidth(tab.label)
+		let tab.width = buftabline#strwidth(tab.label)
 		if currentbuf == tab.num
 			let halfwidth = tab.width / 2
 			let lft.width += halfwidth
@@ -154,7 +159,7 @@ function! buftabline#render()
 				endwhile
 				" then snip at the last one to make it fit
 				let endtab = tabs[side.lasttab]
-				while delta > ( endtab.width - strwidth(endtab.label) )
+				while delta > ( endtab.width - buftabline#strwidth(endtab.label) )
 					let endtab.label = substitute(endtab.label, side.cut, '', '')
 				endwhile
 				let endtab.label = substitute(endtab.label, side.cut, side.indicator, '')
