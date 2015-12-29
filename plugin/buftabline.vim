@@ -22,11 +22,6 @@
 " THE SOFTWARE.
 " }}}
 
-if v:version < 703 " because of strwidth()
-	echoerr printf('Vim 7.3 is required for buftabline (this is only %d.%d)',v:version/100,v:version%100)
-	finish
-endif
-
 scriptencoding utf-8
 
 augroup BufTabLine
@@ -37,10 +32,21 @@ hi default link BufTabLineActive  PmenuSel
 hi default link BufTabLineHidden  TabLine
 hi default link BufTabLineFill    TabLineFill
 
-let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
-let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
-let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
-let g:buftabline_show       = get(g:, 'buftabline_show',       2)
+let g:buftabline_numbers        = get(g:, 'buftabline_numbers',         0)
+let g:buftabline_indicators     = get(g:, 'buftabline_indicators',      0)
+let g:buftabline_separators     = get(g:, 'buftabline_separators',      0)
+let g:buftabline_show           = get(g:, 'buftabline_show',            2)
+let g:buftabline_unnamedbufname = get(g:, 'buftabline_unnamedbufname', '')
+
+if exists('*strwidth')
+    function! buftabline#strwidth(expr)
+        return strwidth(a:expr)
+    endfunction
+else
+    function! buftabline#strwidth(expr)
+        return strlen(a:expr)
+    endfunction
+endif
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -48,10 +54,11 @@ endfunction
 
 let s:prev_currentbuf = winbufnr(0)
 function! buftabline#render()
-	let show_num = g:buftabline_numbers == 1
-	let show_ord = g:buftabline_numbers == 2
-	let show_mod = g:buftabline_indicators
-	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
+	let show_num        =  g:buftabline_numbers == 1
+	let show_ord        =  g:buftabline_numbers == 2
+	let show_mod        =  g:buftabline_indicators
+	let lpad            =  g:buftabline_separators ? nr2char(0x23B8) : ' '
+	let unnamedbufname  =  g:buftabline_unnamedbufname
 
 	let bufnums = buftabline#user_buffers()
 
@@ -78,8 +85,13 @@ function! buftabline#render()
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
 		else " unnamed file
-			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
-			\             . ( screen_num ? screen_num : '*' )
+			if screen_num
+				let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
+				\             . screen_num . (strlen(unnamedbufname) ? ' ' . unnamedbufname : '')
+			else
+				let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
+				\             . (strlen(unnamedbufname) ? unnamedbufname : '*')
+			endif
 		endif
 		let tabs += [tab]
 	endfor
@@ -118,7 +130,7 @@ function! buftabline#render()
 	let currentside = lft
 	for tab in tabs
 		let tab.label = lpad . ( has_key(tab, 'fmt') ? printf(tab.fmt, tab.tail) : tab.label ) . ' '
-		let tab.width = strwidth(tab.label)
+		let tab.width = buftabline#strwidth(tab.label)
 		if currentbuf == tab.num
 			let halfwidth = tab.width / 2
 			let lft.width += halfwidth
@@ -147,7 +159,7 @@ function! buftabline#render()
 				endwhile
 				" then snip at the last one to make it fit
 				let endtab = tabs[side.lasttab]
-				while delta > ( endtab.width - strwidth(endtab.label) )
+				while delta > ( endtab.width - buftabline#strwidth(endtab.label) )
 					let endtab.label = substitute(endtab.label, side.cut, '', '')
 				endwhile
 				let endtab.label = substitute(endtab.label, side.cut, side.indicator, '')
