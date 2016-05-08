@@ -47,6 +47,18 @@ effect immediately unless you force an update: >
     the |:ls| command, whereas the ordinal number is a simple sequential count
     from left to right.
 
+    If you want to select buffers with ordinal numbers you can bind your
+    number keys for convenience:
+            nmap <leader>1 <Plug>BufTabLineSelectBuffer1
+            nmap <leader>2 <Plug>BufTabLineSelectBuffer2
+            nmap <leader>3 <Plug>BufTabLineSelectBuffer3
+            nmap <leader>4 <Plug>BufTabLineSelectBuffer4
+            nmap <leader>5 <Plug>BufTabLineSelectBuffer5
+            nmap <leader>6 <Plug>BufTabLineSelectBuffer6
+            nmap <leader>7 <Plug>BufTabLineSelectBuffer7
+            nmap <leader>8 <Plug>BufTabLineSelectBuffer8
+            nmap <leader>9 <Plug>BufTabLineSelectBuffer9
+
 
 *g:buftabline_indicators*    boolean (default off)
 

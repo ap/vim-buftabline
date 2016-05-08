@@ -186,3 +186,13 @@ autocmd BufAdd    * call buftabline#update(0)
 autocmd BufDelete * call buftabline#update(1)
 autocmd TabEnter  * call buftabline#update(0)
 autocmd VimEnter  * call buftabline#update(0)
+
+noremap <silent> <Plug>BufTabLineSelectBuffer1 :exe 'b'.buftabline#user_buffers()[0]<cr>
+noremap <silent> <Plug>BufTabLineSelectBuffer2 :exe 'b'.buftabline#user_buffers()[1]<cr>
+noremap <silent> <Plug>BufTabLineSelectBuffer3 :exe 'b'.buftabline#user_buffers()[2]<cr>
+noremap <silent> <Plug>BufTabLineSelectBuffer4 :exe 'b'.buftabline#user_buffers()[3]<cr>
+noremap <silent> <Plug>BufTabLineSelectBuffer5 :exe 'b'.buftabline#user_buffers()[4]<cr>
+noremap <silent> <Plug>BufTabLineSelectBuffer6 :exe 'b'.buftabline#user_buffers()[5]<cr>
+noremap <silent> <Plug>BufTabLineSelectBuffer7 :exe 'b'.buftabline#user_buffers()[6]<cr>
+noremap <silent> <Plug>BufTabLineSelectBuffer8 :exe 'b'.buftabline#user_buffers()[7]<cr>
+noremap <silent> <Plug>BufTabLineSelectBuffer9 :exe 'b'.buftabline#user_buffers()[8]<cr>
