@@ -7,8 +7,9 @@
 
     1. Intro ....................................... |buftabline-intro|
     2. Configuration settings ...................... |buftabline-config|
-    3. Tab coloring and colorscheme support ........ |buftabline-colors|
-    4. Source ...................................... |buftabline-source|
+    3. Mappings .................................... |buftabline-mappings|
+    4. Tab coloring and colorscheme support ........ |buftabline-colors|
+    5. Source ...................................... |buftabline-source|
 
 
 ==============================================================================
@@ -47,6 +48,8 @@ effect immediately unless you force an update: >
     the |:ls| command, whereas the ordinal number is a simple sequential count
     from left to right.
 
+    See also |buftabline-mappings|.
+
 
 *g:buftabline_indicators*    boolean (default off)
 
@@ -63,7 +66,37 @@ effect immediately unless you force an update: >
 
 
 ==============================================================================
-3. Tab coloring and colorscheme support                      *buftabline-colors*
+2. Mappings                                                *buftabline-mappings*
+
+If you want to select buffers with ordinal numbers you can bind your number
+keys for convenience: >
+        nmap <leader>1 <Plug>BufTabLine.Go(1)
+        nmap <leader>2 <Plug>BufTabLine.Go(2)
+        nmap <leader>3 <Plug>BufTabLine.Go(3)
+        nmap <leader>4 <Plug>BufTabLine.Go(4)
+        nmap <leader>5 <Plug>BufTabLine.Go(5)
+        nmap <leader>6 <Plug>BufTabLine.Go(6)
+        nmap <leader>7 <Plug>BufTabLine.Go(7)
+        nmap <leader>8 <Plug>BufTabLine.Go(8)
+        nmap <leader>9 <Plug>BufTabLine.Go(9)
+        nmap <leader>0 <Plug>BufTabLine.Go(10)
+<
+On Mac OS, you probably want to use a |<D-| mapping instead, which will emulate
+the standard Cmd+1, Cmd+2, etc. keybindings for this feature: >
+        nmap <D-1> <Plug>BufTabLine.Go(1)
+        nmap <D-2> <Plug>BufTabLine.Go(2)
+        nmap <D-3> <Plug>BufTabLine.Go(3)
+        nmap <D-4> <Plug>BufTabLine.Go(4)
+        nmap <D-5> <Plug>BufTabLine.Go(5)
+        nmap <D-6> <Plug>BufTabLine.Go(6)
+        nmap <D-7> <Plug>BufTabLine.Go(7)
+        nmap <D-8> <Plug>BufTabLine.Go(8)
+        nmap <D-9> <Plug>BufTabLine.Go(9)
+        nmap <D-0> <Plug>BufTabLine.Go(10)
+<
+
+==============================================================================
+4. Tab coloring and colorscheme support                      *buftabline-colors*
 
 This plugin uses several custom highlight groups to render the buffer tabs.
 The custom groups are linked to several other built-in Vim highlight groups
@@ -86,7 +119,7 @@ The highlight groups and their default links are as follows:
 
 
 ==============================================================================
-4. Source                                                    *buftabline-source*
+5. Source                                                    *buftabline-source*
 
 https://github.com/ap/vim-buftabline
 
