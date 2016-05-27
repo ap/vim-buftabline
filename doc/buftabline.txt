@@ -48,8 +48,6 @@ effect immediately unless you force an update: >
     the |:ls| command, whereas the ordinal number is a simple sequential count
     from left to right.
 
-    See also |buftabline-mappings|.
-
 
 *g:buftabline_indicators*    boolean (default off)
 
@@ -68,8 +66,8 @@ effect immediately unless you force an update: >
 ==============================================================================
 2. Mappings                                                *buftabline-mappings*
 
-If you want to select buffers with ordinal numbers you can bind your number
-keys for convenience: >
+To switch buffers by their ordinal number (|g:buftabline_numbers| = 2) you can
+map keys to the |<Plug>| mappings provided by this plugin: >
         nmap <leader>1 <Plug>BufTabLine.Go(1)
         nmap <leader>2 <Plug>BufTabLine.Go(2)
         nmap <leader>3 <Plug>BufTabLine.Go(3)
@@ -111,11 +109,11 @@ colorscheme for this plugin specifically.
 
 The highlight groups and their default links are as follows:
 
-    Custom group             Default link
-    *BufTabLineCurrent*        |TabLineSel|
-    *BufTabLineActive*         |PmenuSel|
-    *BufTabLineHidden*         |TabLine|
-    *BufTabLineFill*           |TabLineFill|
+    Custom group             Default link      Meaning
+    *BufTabLineCurrent*        |TabLineSel|        Buffer shown in current window
+    *BufTabLineActive*         |PmenuSel|          Buffer shown in other window
+    *BufTabLineHidden*         |TabLine|           Buffer not currently visible
+    *BufTabLineFill*           |TabLineFill|       Empty area
 
 
 ==============================================================================
