@@ -62,6 +62,10 @@ effect immediately unless you force an update: >
     left side of each tab with U+23B8 LEFT VERTICAL BOX LINE. Therefore the
     separator will be highlighted the same way as the tab to its left.)
 
+*g:buftabline_separators_char*    string (default nr2char(0x23B8))
+
+    Can be used to specify the character or string to be used as the
+    separator between tabs. The default is U+23B8 LEFT VERTICAL BOX LINE.
 
 ==============================================================================
 2. Mappings                                                *buftabline-mappings*
