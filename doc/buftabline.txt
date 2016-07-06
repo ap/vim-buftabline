@@ -64,8 +64,8 @@ effect immediately unless you force an update: >
 
 *g:buftabline_separators_char*    string (default nr2char(0x23B8))
 
-    Can be used to specify the character or string to be used as the
-    separator between tabs. The default is U+23B8 LEFT VERTICAL BOX LINE.
+    Specifies the character or string to use as the separator between tabs.
+    The default is U+23B8 LEFT VERTICAL BOX LINE.
 
 ==============================================================================
 2. Mappings                                                *buftabline-mappings*
