@@ -31,23 +31,27 @@ Vim tabs are not very useful except in very particular circumstances. To
 understand why this is, you have to understand that the display in Vim has
 3 layers of indirection:
 
-1. Buffers correspond to files. Not necessarily to files on disk, but in
-   potentiality; i.e. a buffer becomes the content of a file when you do `:w`
+1. Buffers correspond to files.
 
-2. Windows correspond to rectangular areas on the screen, each of which is
-   associated with one buffer. But any window can be associated with any
-   buffer, and any buffer with any window.
+   Not necessarily to files on disk, but in potentiality; i.e. a buffer becomes
+   the content of a file when you do `:w`
 
-   You can change which buffer is shown in a window at any time, and you can
-   split and resize windows to create any on-screen arrangement you want.
+2. Windows correspond to rectangular areas on the screen, each associated with
+   some buffer.
 
-   So you could have 3 windows showing the same buffer, e.g. to have different
-   areas of a file visible at once. But note that while windows are always
-   associated with a buffer, a buffer need not be associated with any window –
-   or more concretely, a file can be loaded but not currently shown on screen.
+   Any window can be associated with any buffer, and any buffer with any
+   window. You can change which buffer is shown in a window at any time, and
+   you can split and resize windows to create any on-screen arrangement you
+   want. So you could have 3 windows showing the same buffer, e.g. to work on
+   several areas of a file at once.
 
-3. Tabs correspond to screens, i.e. to an arrangement of windows. In other
-   windowing environments the corresponding concept is often called a viewport,
+   Note that while windows are always associated with a buffer - i.e. an area
+   of the screen always shows some file –, a buffer need not be associated with
+   any window – i.e. a file may be loaded without being shown on screen.
+
+3. Tabs correspond to entire screens, i.e. to an arrangement of windows.
+
+   In other windowing environments this concept is often called a viewport,
    or a virtual desktop. Each window belongs to one particular tab. But note
    that a buffer can be shown in any window (or no window at all), so any file
    can appear any number of times in any number of tabs. Tabs and files do not
@@ -61,9 +65,9 @@ parts of Vim (such as the help function and the netrw Explorer) that expect to
 be working with windows, not tabs, and so can easily inadvertently shatter the
 illusion.
 
-Now, if you consider what Vim tabs actually are, i.e. viewports, there are only
-very limited circumstances in which you will ever need such functionality, if
-at all.
+So if you consider what Vim tabs actually are, i.e. viewports, and you use Vim
+in a typical way, there are only very limited circumstances in which you will
+ever need such functionality, if at all.
 
 What the typical user wants when they think of as tabs is simply the ability to
 open multiple files and then flip between them, which in Vim means they want
