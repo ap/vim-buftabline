@@ -69,7 +69,7 @@ So if you consider what Vim tabs actually are, i.e. viewports, and you use Vim
 in a typical way, there are only very limited circumstances in which you will
 ever need such functionality, if at all.
 
-What the typical user wants when they think of as tabs is simply the ability to
+What the typical user wants when they think of tabs is simply the ability to
 open multiple files and then flip between them, which in Vim means they want
 buffers – not tabs.
 
