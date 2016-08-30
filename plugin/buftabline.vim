@@ -22,9 +22,9 @@
 " THE SOFTWARE.
 " }}}
 
-if v:version < 703 " because of strwidth()
-	echoerr printf('Vim 7.3 is required for buftabline (this is only %d.%d)',v:version/100,v:version%100)
-	finish
+if v:version < 700
+    echoerr printf('Vim 7 is required for buftabline (this is only %d.%d)',v:version/100,v:version%100)
+    finish
 endif
 
 scriptencoding utf-8
@@ -41,6 +41,67 @@ let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
 let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
 let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
 let g:buftabline_show       = get(g:, 'buftabline_show',       2)
+
+if exists('*strwidth')
+    function! buftabline#strwidth(expr)
+        return strwidth(a:expr)
+    endfunction
+else
+    function! buftabline#normalizecharsforstrwidth(c)
+        let nrValue = char2nr(a:c)
+
+        if nrValue < 0x0080 | return '1' " Optimization for ascii
+        " These values are generated from the strwidth function on My Machine
+        elseif nrValue >= 0x1100  && nrValue <= 0x115f  | return '22'
+        elseif nrValue >= 0x2329  && nrValue <= 0x232a  | return '22'
+        elseif nrValue >= 0x2e80  && nrValue <= 0x2e99  | return '22'
+        elseif nrValue >= 0x2e9b  && nrValue <= 0x2ef3  | return '22'
+        elseif nrValue >= 0x2f00  && nrValue <= 0x2fd5  | return '22'
+        elseif nrValue >= 0x2ff0  && nrValue <= 0x2ffb  | return '22'
+        elseif nrValue >= 0x3000  && nrValue <= 0x303e  | return '22'
+        elseif nrValue >= 0x3041  && nrValue <= 0x3096  | return '22'
+        elseif nrValue >= 0x3099  && nrValue <= 0x30ff  | return '22'
+        elseif nrValue >= 0x3105  && nrValue <= 0x312d  | return '22'
+        elseif nrValue >= 0x3131  && nrValue <= 0x318e  | return '22'
+        elseif nrValue >= 0x3190  && nrValue <= 0x31ba  | return '22'
+        elseif nrValue >= 0x31c0  && nrValue <= 0x31e3  | return '22'
+        elseif nrValue >= 0x31f0  && nrValue <= 0x321e  | return '22'
+        elseif nrValue >= 0x3220  && nrValue <= 0x3247  | return '22'
+        elseif nrValue >= 0x3250  && nrValue <= 0x32fe  | return '22'
+        elseif nrValue >= 0x3300  && nrValue <= 0x4dbf  | return '22'
+        elseif nrValue >= 0x4e00  && nrValue <= 0xa48c  | return '22'
+        elseif nrValue >= 0xa490  && nrValue <= 0xa4c6  | return '22'
+        elseif nrValue >= 0xa960  && nrValue <= 0xa97c  | return '22'
+        elseif nrValue >= 0xac00  && nrValue <= 0xd7a3  | return '22'
+        elseif nrValue >= 0xf900  && nrValue <= 0xfaff  | return '22'
+        elseif nrValue >= 0xfe10  && nrValue <= 0xfe19  | return '22'
+        elseif nrValue >= 0xfe30  && nrValue <= 0xfe52  | return '22'
+        elseif nrValue >= 0xfe54  && nrValue <= 0xfe66  | return '22'
+        elseif nrValue >= 0xfe68  && nrValue <= 0xfe6b  | return '22'
+        elseif nrValue >= 0xff01  && nrValue <= 0xff60  | return '22'
+        elseif nrValue >= 0xffe0  && nrValue <= 0xffe6  | return '22'
+        elseif nrValue >= 0x1b000 && nrValue <= 0x1b001 | return '22'
+        elseif nrValue >= 0x1f200 && nrValue <= 0x1f202 | return '22'
+        elseif nrValue >= 0x1f210 && nrValue <= 0x1f23a | return '22'
+        elseif nrValue >= 0x1f240 && nrValue <= 0x1f248 | return '22'
+        elseif nrValue >= 0x1f250 && nrValue <= 0x1f251 | return '22'
+        elseif nrValue >= 0x0080  && nrValue <= 0x009f  | return '4444'
+        elseif nrValue == 0x070f                        | return '666666'
+        elseif nrValue >= 0x180b && nrValue <= 0x180e   | return '666666'
+        elseif nrValue >= 0x200b && nrValue <= 0x200f   | return '666666'
+        elseif nrValue >= 0x202a && nrValue <= 0x202e   | return '666666'
+        elseif nrValue >= 0x206a && nrValue <= 0x206f   | return '666666'
+        elseif nrValue >= 0xd800 && nrValue <= 0xdfff   | return '666666'
+        elseif nrValue == 0xfeff                        | return '666666'
+        elseif nrValue >= 0xfff9 && nrValue <= 0xfffb   | return '666666'
+        endif
+        return '1'
+    endfunction
+
+    function! buftabline#strwidth(expr)
+        return strlen(substitute(a:expr,'.','\=buftabline#normalizecharsforstrwidth(submatch(0))','g'))
+    endfunction
+endif
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -118,7 +179,7 @@ function! buftabline#render()
 	let currentside = lft
 	for tab in tabs
 		let tab.label = lpad . ( has_key(tab, 'fmt') ? printf(tab.fmt, tab.tail) : tab.label ) . ' '
-		let tab.width = strwidth(tab.label)
+		let tab.width = buftabline#strwidth(tab.label)
 		if currentbuf == tab.num
 			let halfwidth = tab.width / 2
 			let lft.width += halfwidth
@@ -147,7 +208,7 @@ function! buftabline#render()
 				endwhile
 				" then snip at the last one to make it fit
 				let endtab = tabs[side.lasttab]
-				while delta > ( endtab.width - strwidth(endtab.label) )
+				while delta > ( endtab.width - buftabline#strwidth(endtab.label) )
 					let endtab.label = substitute(endtab.label, side.cut, '', '')
 				endwhile
 				let endtab.label = substitute(endtab.label, side.cut, side.indicator, '')
