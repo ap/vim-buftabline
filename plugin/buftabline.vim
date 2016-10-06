@@ -74,7 +74,9 @@ function! buftabline#render()
 			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . screen_num
 			if strlen(pre) | let pre .= ' ' | endif
 			let tab.fmt = pre . '%s' . suf
-			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
+			if strlen(tab.tail)
+				let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
+			endif
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
 		else " unnamed file
