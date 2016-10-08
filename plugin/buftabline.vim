@@ -139,9 +139,7 @@ function! buftabline#render()
 				let delta = side.width - remainder
 				" toss entire tabs to close the distance
 				while delta >= tabs[side.lasttab].width
-					let gain = tabs[side.lasttab].width
-					let delta -= gain
-					call remove(tabs, side.lasttab, side.lasttab)
+					let delta -= remove(tabs, side.lasttab).width
 				endwhile
 				" then snip at the last one to make it fit
 				let endtab = tabs[side.lasttab]
