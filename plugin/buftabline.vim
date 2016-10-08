@@ -57,7 +57,8 @@ function! buftabline#render()
 
 	" pick up data on all the buffers
 	let tabs = []
-	let tabs_by_tail = {}
+	let path_tabs = []
+	let tabs_per_tail = {}
 	let currentbuf = winbufnr(0)
 	let screen_num = 0
 	for bufnum in bufnums
@@ -74,7 +75,8 @@ function! buftabline#render()
 			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . screen_num
 			if strlen(pre) | let pre .= ' ' | endif
 			let tab.fmt = pre . '%s' . suf
-			let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
+			let tabs_per_tail[tab.tail] = get(tabs_per_tail, tab.tail, 0) + 1
+			let path_tabs += [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
 		else " unnamed file
@@ -85,18 +87,14 @@ function! buftabline#render()
 	endfor
 
 	" disambiguate same-basename files by adding trailing path segments
-	while 1
-		let groups = filter(values(tabs_by_tail),'len(v:val) > 1')
-		if ! len(groups) | break | endif
-		for group in groups
-			call remove(tabs_by_tail, group[0].tail)
-			for tab in group
-				if strlen(tab.head) && tab.head != '.'
-					let tab.tail = fnamemodify(tab.head, ':t') . '/' . tab.tail
-					let tab.head = fnamemodify(tab.head, ':h')
-				endif
-				let tabs_by_tail[tab.tail] = get(tabs_by_tail, tab.tail, []) + [tab]
-			endfor
+	while len(filter(tabs_per_tail, 'v:val > 1'))
+		let [ambiguous, tabs_per_tail] = [tabs_per_tail, {}]
+		for tab in path_tabs
+			if strlen(tab.head) && tab.head != '.' && has_key(ambiguous, tab.tail)
+				let tab.tail = fnamemodify(tab.head, ':t') . '/' . tab.tail
+				let tab.head = fnamemodify(tab.head, ':h')
+			endif
+			let tabs_per_tail[tab.tail] = get(tabs_per_tail, tab.tail, 0) + 1
 		endfor
 	endwhile
 
