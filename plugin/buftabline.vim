@@ -138,17 +138,17 @@ function! buftabline#render()
 		\ : rgt.width < rgt.half ? [ [lft], &columns - rgt.width ]
 		\ :                        [ [lft, rgt], 0 ]
 		for side in oversized
-				let delta = side.width - ( remainder ? remainder : side.half )
-				" toss entire tabs to close the distance
-				while delta >= tabs[side.lasttab].width
-					let delta -= remove(tabs, side.lasttab).width
-				endwhile
-				" then snip at the last one to make it fit
-				let endtab = tabs[side.lasttab]
-				while delta > ( endtab.width - strwidth(endtab.label) )
-					let endtab.label = substitute(endtab.label, side.cut, '', '')
-				endwhile
-				let endtab.label = substitute(endtab.label, side.cut, side.indicator, '')
+			let delta = side.width - ( remainder ? remainder : side.half )
+			" toss entire tabs to close the distance
+			while delta >= tabs[side.lasttab].width
+				let delta -= remove(tabs, side.lasttab).width
+			endwhile
+			" then snip at the last one to make it fit
+			let endtab = tabs[side.lasttab]
+			while delta > ( endtab.width - strwidth(endtab.label) )
+				let endtab.label = substitute(endtab.label, side.cut, '', '')
+			endwhile
+			let endtab.label = substitute(endtab.label, side.cut, side.indicator, '')
 		endfor
 	endif
 
