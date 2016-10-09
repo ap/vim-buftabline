@@ -46,7 +46,7 @@ function! buftabline#user_buffers() " help buffers are always unlisted, but quic
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 endfunction
 
-let s:prev_currentbuf = winbufnr(0)
+let s:centerbuf = winbufnr(0)
 function! buftabline#render()
 	let show_num = g:buftabline_numbers == 1
 	let show_ord = g:buftabline_numbers == 2
@@ -54,6 +54,7 @@ function! buftabline#render()
 	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
 
 	let bufnums = buftabline#user_buffers()
+	let centerbuf = s:centerbuf " prevent tabline jumping around when non-user buffer current (e.g. help)
 
 	" pick up data on all the buffers
 	let tabs = []
@@ -65,6 +66,7 @@ function! buftabline#render()
 		let screen_num = show_num ? bufnum : show_ord ? screen_num + 1 : ''
 		let tab = { 'num': bufnum }
 		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
+		if currentbuf == bufnum | let [centerbuf, s:centerbuf] = [bufnum, bufnum] | endif
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
 			let bufpath = substitute(fnamemodify(bufpath, ':p:~:.'), '^$', '.', '')
@@ -104,20 +106,12 @@ function! buftabline#render()
 	let lft = { 'lasttab':  0, 'cut':  '.', 'indicator': '<', 'width': 0, 'half': &columns / 2 }
 	let rgt = { 'lasttab': -1, 'cut': '.$', 'indicator': '>', 'width': 0, 'half': &columns - lft.half }
 
-	" 2. if current buffer not a user buffer, remember the previous one
-	"    (to keep the tabline from jumping around e.g. when browsing help)
-	if -1 == index(bufnums, currentbuf)
-		let currentbuf = s:prev_currentbuf
-	else
-		let s:prev_currentbuf = currentbuf
-	endif
-
-	" 3. sum the string lengths for the left and right halves
+	" 2. sum the string lengths for the left and right halves
 	let currentside = lft
 	for tab in tabs
 		let tab.label = lpad . ( has_key(tab, 'fmt') ? printf(tab.fmt, tab.tail) : tab.label ) . ' '
 		let tab.width = strwidth(tab.label)
-		if currentbuf == tab.num
+		if centerbuf == tab.num
 			let halfwidth = tab.width / 2
 			let lft.width += halfwidth
 			let rgt.width += tab.width - halfwidth
@@ -126,7 +120,7 @@ function! buftabline#render()
 		endif
 		let currentside.width += tab.width
 	endfor
-	if 0 == rgt.width " no current window seen?
+	if currentside is lft " centered buffer not seen?
 		" then blame any overflow on the right side, to protect the left
 		let [lft.width, rgt.width] = [0, lft.width]
 	endif
