@@ -46,6 +46,7 @@ function! buftabline#user_buffers() " help buffers are always unlisted, but quic
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 endfunction
 
+let s:dirsep = fnamemodify(getcwd(),':p')[-1:]
 let s:centerbuf = winbufnr(0)
 function! buftabline#render()
 	let show_num = g:buftabline_numbers == 1
@@ -69,10 +70,9 @@ function! buftabline#render()
 		if currentbuf == bufnum | let [centerbuf, s:centerbuf] = [bufnum, bufnum] | endif
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
-			let isdir = isdirectory(bufpath)
-			let bufpath = fnamemodify(bufpath, ':p:~' . ( isdir ? ':h' : '' ))
-			let tab.head = fnamemodify(bufpath, ':h')
-			let tab.label = fnamemodify(bufpath, ':t') . ( isdir ? '/' : '' )
+			let tab.path = fnamemodify(bufpath, ':p:~:.')
+			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
+			let tab.label = tab.path[tab.sep + 1:]
 			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . screen_num
 			let tab.pre = strlen(pre) ? pre . ' ' : ''
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
@@ -90,9 +90,9 @@ function! buftabline#render()
 	while len(filter(tabs_per_tail, 'v:val > 1'))
 		let [ambiguous, tabs_per_tail] = [tabs_per_tail, {}]
 		for tab in path_tabs
-			if strlen(tab.head) && tab.head != '.' && has_key(ambiguous, tab.label)
-				let tab.label = fnamemodify(tab.head, ':t') . '/' . tab.label
-				let tab.head = fnamemodify(tab.head, ':h')
+			if -1 < tab.sep && has_key(ambiguous, tab.label)
+				let tab.sep = strridx(tab.path, s:dirsep, tab.sep - 1)
+				let tab.label = tab.path[tab.sep + 1:]
 			endif
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
 		endfor
