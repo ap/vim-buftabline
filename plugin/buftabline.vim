@@ -22,8 +22,8 @@
 " THE SOFTWARE.
 " }}}
 
-if v:version < 703 " because of strwidth()
-	echoerr printf('Vim 7.3 is required for buftabline (this is only %d.%d)',v:version/100,v:version%100)
+if v:version < 700
+	echoerr printf('Vim 7 is required for buftabline (this is only %d.%d)',v:version/100,v:version%100)
 	finish
 endif
 
@@ -186,3 +186,18 @@ noremap <silent> <Plug>BufTabLine.Go(7)  :exe 'b'.buftabline#user_buffers()[6]<c
 noremap <silent> <Plug>BufTabLine.Go(8)  :exe 'b'.buftabline#user_buffers()[7]<cr>
 noremap <silent> <Plug>BufTabLine.Go(9)  :exe 'b'.buftabline#user_buffers()[8]<cr>
 noremap <silent> <Plug>BufTabLine.Go(10) :exe 'b'.buftabline#user_buffers()[9]<cr>
+
+if v:version < 703
+	function s:transpile()
+		let [ savelist, &list ] = [ &list, 0 ]
+		redir => src
+			silent function buftabline#render
+		redir END
+		let &list = savelist
+		let src = substitute(src, '\n\zs[0-9 ]*', '', 'g')
+		let src = substitute(src, 'strwidth(strtrans(\([^)]\+\)))', 'strlen(substitute(\1, ''\p\|\(.\)'', ''x\1'', ''g''))', 'g')
+		return src
+	endfunction
+	exe "delfunction buftabline#render\n" . s:transpile()
+	delfunction s:transpile
+endif
