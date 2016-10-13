@@ -108,7 +108,7 @@ function! buftabline#render()
 	let currentside = lft
 	for tab in tabs
 		let tab.label = lpad . get(tab, 'pre', '') . tab.label . ' '
-		let tab.width = strwidth(tab.label)
+		let tab.width = strwidth(strtrans(tab.label))
 		if centerbuf == tab.num
 			let halfwidth = tab.width / 2
 			let lft.width += halfwidth
@@ -137,7 +137,7 @@ function! buftabline#render()
 			endwhile
 			" then snip at the last one to make it fit
 			let endtab = tabs[side.lasttab]
-			while delta > ( endtab.width - strwidth(endtab.label) )
+			while delta > ( endtab.width - strwidth(strtrans(endtab.label)) )
 				let endtab.label = substitute(endtab.label, side.cut, '', '')
 			endwhile
 			let endtab.label = substitute(endtab.label, side.cut, side.indicator, '')
@@ -146,7 +146,7 @@ function! buftabline#render()
 
 	if len(tabs) | let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '') | endif
 
-	return '%1X' . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,v:val.label)'),'') . '%#BufTabLineFill#'
+	return '%1X' . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,strtrans(v:val.label))'),'') . '%#BufTabLineFill#'
 endfunction
 
 function! buftabline#update(deletion)
