@@ -146,7 +146,8 @@ function! buftabline#render()
 
 	if len(tabs) | let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '') | endif
 
-	return '%1X' . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,strtrans(v:val.label))'),'') . '%#BufTabLineFill#'
+	let swallowclicks = '%'.(1 + tabpagenr('$')).'X'
+	return swallowclicks . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,strtrans(v:val.label))'),'') . '%#BufTabLineFill#'
 endfunction
 
 function! buftabline#update(deletion)
