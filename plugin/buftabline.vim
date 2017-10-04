@@ -32,10 +32,11 @@ scriptencoding utf-8
 augroup BufTabLine
 autocmd!
 
-hi default link BufTabLineCurrent TabLineSel
-hi default link BufTabLineActive  PmenuSel
-hi default link BufTabLineHidden  TabLine
-hi default link BufTabLineFill    TabLineFill
+hi default link BufTabLineCurrent   TabLineSel
+hi default link BufTabLineActive    PmenuSel
+hi default link BufTabLineHidden    TabLine
+hi default link BufTabLineFill      TabLineFill
+hi default link BufTabLineModified  TabLine
 
 let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
 let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
@@ -66,7 +67,7 @@ function! buftabline#render()
 	for bufnum in bufnums
 		let screen_num = show_num ? bufnum : show_ord ? screen_num + 1 : ''
 		let tab = { 'num': bufnum }
-		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
+		let tab.hilite = currentbuf == bufnum ? 'Current' : show_mod && getbufvar(bufnum, '&mod') ? 'Modified' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
 		if currentbuf == bufnum | let [centerbuf, s:centerbuf] = [bufnum, bufnum] | endif
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
