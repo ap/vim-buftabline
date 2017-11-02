@@ -64,7 +64,7 @@ effect immediately unless you force an update: >
 
 
 ==============================================================================
-2. Mappings                                                *buftabline-mappings*
+3. Mappings                                                *buftabline-mappings*
 
 To switch buffers by their ordinal number (|g:buftabline_numbers| = 2) you can
 map keys to the |<Plug>| mappings provided by this plugin: >
