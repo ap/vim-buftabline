@@ -1,0 +1,3 @@
+set nocompatible nobackup noswapfile viminfo=
+set number ruler
+syntax on
