@@ -1,9 +1,9 @@
-![Buftabline](http://ap.github.io/vim-buftabline/screenshot.png)
-================================================================
+<h1 align="center">Buftabline</h1>
 
-Buftabline takes over the `tabline` and renders the buffer list in it instead
-of a tab list. It is designed with the ideal that it should Just Work: drop it
-into your setup and you're done. There is only minimal configurable behavior.
+<div align="center">
+A well-integrated, low-configuration buffer list that lives in the tabline<br>
+<img src="https://raw.githubusercontent.com/ap/vim-buftabline/26302bf68bd417a97bada3978d4dbff0546f57ac/screenshot.png" width="871" height="585">
+</div>
 
 
 Buffer basics
@@ -27,9 +27,9 @@ For the full story, read [`:help windows.txt`][windows].
 Why this and not Vim tabs?
 --------------------------
 
-Vim tabs are not very useful except in very particular circumstances. To
-understand why this is, you have to understand that the display in Vim has
-3 layers of indirection:
+Vim tabs are not very useful except in very particular circumstances.
+To understand why this is, you have to understand that the display in Vim
+has 3 layers of indirection:
 
 1. Buffers correspond to files.
 
