@@ -160,9 +160,9 @@ function! buftabline#update(deletion)
 	elseif 1 == g:buftabline_show
 		let bufnums = buftabline#user_buffers()
 		let total = len(bufnums)
-		if a:deletion && -1 < index(bufnums, bufnr('%'))
+		if a:deletion && -1 < index(bufnums, str2nr(expand('<abuf>')))
 			" BufDelete triggers before buffer is deleted
-			" so if current buffer is a user buffer, it must be subtracted
+			" so if the buffer to be deleted is a user buffer, it must be subtracted
 			let total -= 1
 		endif
 		let &g:showtabline = 1 + ( total > 1 )
