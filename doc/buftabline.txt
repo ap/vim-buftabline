@@ -63,6 +63,14 @@ effect immediately unless you force an update: >
     separator will be highlighted the same way as the tab to its left.)
 
 
+*g:buftabline_plug_max*      number (default 10)
+
+    The number of |buftabline-mappings| that will be created by the plugin.
+    You can request more of them or turn off the functionality entirely by
+    setting this to 0. Note it only has an effect before loading the plugin,
+    not if you change it later.
+
+
 ==============================================================================
 3. Mappings                                                *buftabline-mappings*
 
@@ -92,6 +100,8 @@ the standard Cmd+1, Cmd+2, etc. keybindings for this feature: >
         nmap <D-9> <Plug>BufTabLine.Go(9)
         nmap <D-0> <Plug>BufTabLine.Go(10)
 <
+You can ask for more (or fewer) than the default 10 <Plug> mappings using the
+|g:buftabline_plug_max| setting.
 
 ==============================================================================
 4. Tab coloring and colorscheme support                      *buftabline-colors*

@@ -41,6 +41,7 @@ let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
 let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
 let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
 let g:buftabline_show       = get(g:, 'buftabline_show',       2)
+let g:buftabline_plug_max   = get(g:, 'buftabline_plug_max',  10)
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -177,7 +178,7 @@ autocmd BufDelete * call buftabline#update(1)
 autocmd TabEnter  * call buftabline#update(0)
 autocmd VimEnter  * call buftabline#update(0)
 
-for s:n in range(1, 99)
+for s:n in range(1, g:buftabline_plug_max)
     execute printf("noremap <silent> <Plug>BufTabLine.Go(%d) :exe 'b'.get(buftabline#user_buffers(),%d,'')<cr>", s:n, s:n - 1)
 endfor
 unlet s:n
