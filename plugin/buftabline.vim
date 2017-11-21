@@ -177,16 +177,11 @@ autocmd BufDelete * call buftabline#update(1)
 autocmd TabEnter  * call buftabline#update(0)
 autocmd VimEnter  * call buftabline#update(0)
 
-noremap <silent> <Plug>BufTabLine.Go(1)  :exe 'b'.get(buftabline#user_buffers(),0,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(2)  :exe 'b'.get(buftabline#user_buffers(),1,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(3)  :exe 'b'.get(buftabline#user_buffers(),2,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(4)  :exe 'b'.get(buftabline#user_buffers(),3,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(5)  :exe 'b'.get(buftabline#user_buffers(),4,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(6)  :exe 'b'.get(buftabline#user_buffers(),5,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(7)  :exe 'b'.get(buftabline#user_buffers(),6,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(8)  :exe 'b'.get(buftabline#user_buffers(),7,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(9)  :exe 'b'.get(buftabline#user_buffers(),8,'')<cr>
-noremap <silent> <Plug>BufTabLine.Go(10) :exe 'b'.get(buftabline#user_buffers(),9,'')<cr>
+let c = 1
+while c <= 99
+    execute "noremap <silent> <Plug>BufTabLine.Go(" . c . ")  :exe 'b'.get(buftabline#user_buffers()," . (c - 1) . ",'')<cr>"
+    let c += 1
+endwhile
 
 if v:version < 703
 	function s:transpile()
