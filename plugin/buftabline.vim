@@ -126,12 +126,12 @@ function! buftabline#render()
 
 	" 3. toss away tabs and pieces until all fits:
 	if ( lft.width + rgt.width ) > &columns
-		let [oversized, remainder]
-		\ = lft.width < lft.half ? [ [rgt], &columns - lft.width ]
-		\ : rgt.width < rgt.half ? [ [lft], &columns - rgt.width ]
-		\ :                        [ [lft, rgt], 0 ]
-		for side in oversized
-			let delta = side.width - ( remainder ? remainder : side.half )
+		let oversized
+		\ = lft.width < lft.half ? [ [ rgt, &columns - lft.width ] ]
+		\ : rgt.width < rgt.half ? [ [ lft, &columns - rgt.width ] ]
+		\ :                        [ [ lft, lft.half ], [ rgt, rgt.half ] ]
+		for [side, budget] in oversized
+			let delta = side.width - budget
 			" toss entire tabs to close the distance
 			while delta >= tabs[side.lasttab].width
 				let delta -= remove(tabs, side.lasttab).width
