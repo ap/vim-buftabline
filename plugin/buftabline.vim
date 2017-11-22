@@ -151,7 +151,7 @@ function! buftabline#render()
 	return swallowclicks . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,strtrans(v:val.label))'),'') . '%#BufTabLineFill#'
 endfunction
 
-function! buftabline#update(deletion)
+function! buftabline#update(zombie)
 	set tabline=
 	if tabpagenr('$') > 1 | set guioptions+=e showtabline=2 | return | endif
 	set guioptions-=e
@@ -159,14 +159,9 @@ function! buftabline#update(deletion)
 		set showtabline=1
 		return
 	elseif 1 == g:buftabline_show
-		let bufnums = buftabline#user_buffers()
-		let total = len(bufnums)
-		if a:deletion && -1 < index(bufnums, str2nr(expand('<abuf>')))
-			" BufDelete triggers before buffer is deleted
-			" so if the buffer to be deleted is a user buffer, it must be subtracted
-			let total -= 1
-		endif
-		let &g:showtabline = 1 + ( total > 1 )
+		" account for BufDelete triggering before buffer is actually deleted
+		let bufnums = filter(buftabline#user_buffers(), 'v:val != a:zombie')
+		let &g:showtabline = 1 + ( len(bufnums) > 1 )
 	elseif 2 == g:buftabline_show
 		set showtabline=2
 	endif
@@ -176,7 +171,7 @@ endfunction
 autocmd VimEnter  * call buftabline#update(0)
 autocmd TabEnter  * call buftabline#update(0)
 autocmd BufAdd    * call buftabline#update(0)
-autocmd BufDelete * call buftabline#update(1)
+autocmd BufDelete * call buftabline#update(str2nr(expand('<abuf>')))
 
 for s:n in range(1, g:buftabline_plug_max)
     execute printf("noremap <silent> <Plug>BufTabLine.Go(%d) :exe 'b'.get(buftabline#user_buffers(),%d,'')<cr>", s:n, s:n - 1)
