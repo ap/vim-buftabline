@@ -173,10 +173,10 @@ function! buftabline#update(deletion)
 	set tabline=%!buftabline#render()
 endfunction
 
+autocmd VimEnter  * call buftabline#update(0)
+autocmd TabEnter  * call buftabline#update(0)
 autocmd BufAdd    * call buftabline#update(0)
 autocmd BufDelete * call buftabline#update(1)
-autocmd TabEnter  * call buftabline#update(0)
-autocmd VimEnter  * call buftabline#update(0)
 
 for s:n in range(1, g:buftabline_plug_max)
     execute printf("noremap <silent> <Plug>BufTabLine.Go(%d) :exe 'b'.get(buftabline#user_buffers(),%d,'')<cr>", s:n, s:n - 1)
