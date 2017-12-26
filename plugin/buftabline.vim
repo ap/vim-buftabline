@@ -42,6 +42,7 @@ let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
 let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
 let g:buftabline_show       = get(g:, 'buftabline_show',       2)
 let g:buftabline_plug_max   = get(g:, 'buftabline_plug_max',  10)
+let g:buftabline_path       = get(g:, 'buftabline_path',  0)
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -73,7 +74,16 @@ function! buftabline#render()
 		if strlen(bufpath)
 			let tab.path = fnamemodify(bufpath, ':p:~:.')
 			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
-			let tab.label = tab.path[tab.sep + 1:]
+			if 1 == g:buftabline_path
+				let s = split(tab.path, '/')
+				if len(s) > 1
+					let tab.label = s[-2] . '/' . s[-1]
+				else
+					let tab.label = s[-1]
+				endif
+			else
+				let tab.label = tab.path[tab.sep + 1:]
+			endif
 			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . screen_num
 			let tab.pre = strlen(pre) ? pre . ' ' : ''
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1

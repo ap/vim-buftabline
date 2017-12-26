@@ -71,6 +71,13 @@ effect immediately unless you force an update: >
     not if you change it later.
 
 
+*g:buftabline_path*      number (default 0)
+
+    When on, the parent directory is always shown in the buffer label:
+            0: only show the parent directory for ambiguous filenames
+            1: always show the parent directory in buffer labels
+
+
 ==============================================================================
 3. Mappings                                                *buftabline-mappings*
 
