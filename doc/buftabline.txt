@@ -123,6 +123,8 @@ The highlight groups and their default links are as follows:
     *BufTabLineCurrent*        |TabLineSel|        Buffer shown in current window
     *BufTabLineActive*         |PmenuSel|          Buffer shown in other window
     *BufTabLineHidden*         |TabLine|           Buffer not currently visible
+    *BufTabLineHiddenAlt*      |TabLineFill|       Buffer not currently visible,
+                                               alternative color
     *BufTabLineFill*           |TabLineFill|       Empty area
 
 
