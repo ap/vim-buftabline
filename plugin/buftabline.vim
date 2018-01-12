@@ -32,10 +32,11 @@ scriptencoding utf-8
 augroup BufTabLine
 autocmd!
 
-hi default link BufTabLineCurrent TabLineSel
-hi default link BufTabLineActive  PmenuSel
-hi default link BufTabLineHidden  TabLine
-hi default link BufTabLineFill    TabLineFill
+hi default link BufTabLineCurrent    TabLineSel
+hi default link BufTabLineActive     PmenuSel
+hi default link BufTabLineHidden     TabLine
+hi default link BufTabLineHiddenAlt  TabLineFill
+hi default link BufTabLineFill       TabLineFill
 
 let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
 let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
@@ -64,10 +65,11 @@ function! buftabline#render()
 	let tabs_per_tail = {}
 	let currentbuf = winbufnr(0)
 	let screen_num = 0
+	let ordinal_num = 0
 	for bufnum in bufnums
-		let screen_num = show_num ? bufnum : show_ord ? screen_num + 1 : ''
+		let screen_num = show_num ? bufnum : show_ord ? ordinal_num : ''
 		let tab = { 'num': bufnum }
-		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
+                let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : ordinal_num % 2 == 0 ? 'Hidden' : 'HiddenAlt'
 		if currentbuf == bufnum | let [centerbuf, s:centerbuf] = [bufnum, bufnum] | endif
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
@@ -85,6 +87,7 @@ function! buftabline#render()
 			\             . ( screen_num ? screen_num : '*' )
 		endif
 		let tabs += [tab]
+                let ordinal_num = ordinal_num+1
 	endfor
 
 	" disambiguate same-basename files by adding trailing path segments
