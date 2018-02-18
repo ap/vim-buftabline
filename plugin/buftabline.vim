@@ -173,10 +173,12 @@ autocmd TabEnter  * call buftabline#update(0)
 autocmd BufAdd    * call buftabline#update(0)
 autocmd BufDelete * call buftabline#update(str2nr(expand('<abuf>')))
 
-for s:n in range(1, g:buftabline_plug_max)
-    execute printf("noremap <silent> <Plug>BufTabLine.Go(%d) :exe 'b'.get(buftabline#user_buffers(),%d,'')<cr>", s:n, s:n - 1)
-endfor
-unlet s:n
+if g:buftabline_plug_max > 0
+  for s:n in range(1, g:buftabline_plug_max)
+      execute printf("noremap <silent> <Plug>BufTabLine.Go(%d) :exe 'b'.get(buftabline#user_buffers(),%d,'')<cr>", s:n, s:n - 1)
+  endfor
+  unlet s:n
+endif
 
 if v:version < 703
 	function s:transpile()
