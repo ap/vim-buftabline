@@ -176,7 +176,7 @@ autocmd BufDelete * call buftabline#update(str2nr(expand('<abuf>')))
 for s:n in range(1, g:buftabline_plug_max)
     execute printf("noremap <silent> <Plug>BufTabLine.Go(%d) :exe 'b'.get(buftabline#user_buffers(),%d,'')<cr>", s:n, s:n - 1)
 endfor
-unlet s:n
+unlet! s:n " not defined if loop not entered
 
 if v:version < 703
 	function s:transpile()
