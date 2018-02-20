@@ -44,42 +44,57 @@ function! buftabline#user_buffers() " help buffers are always unlisted, but quic
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 endfunction
 
-let s:dirsep = fnamemodify(getcwd(),':p')[-1:]
-let s:centerbuf = winbufnr(0)
-function! buftabline#render()
+function! buftabline#default_format(tab)
+	let tab = a:tab
 	let show_num = g:buftabline_numbers == 1
 	let show_ord = g:buftabline_numbers == 2
 	let show_mod = g:buftabline_indicators
-	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
+	if strlen(tab.label)
+		let mod = show_mod && tab.modified ? '+' : ''
+		let num = show_num ? tab.num : show_ord ? tab.ordnum : ''
+		let pre = mod . num
+		if strlen(pre)
+			let pre .= ' '
+		endif
+		let rv = pre . tab.label
+	elseif -1 < index(['nofile', 'acwrite'], tab.buftype)
+		let rv = show_mod ? '!' . tab.ordnum : tab.ordnum ? tab.ordnum . '!' : '!'
+	else
+		let mod = show_mod && tab.modified ? '+' : ''
+		let num = show_num ? tab.num : show_ord ? tab.ordnum : '*'
+		let rv = mod . num
+	endif
+	let lpad = tab.ordnum > 1 && g:buftabline_separators ? nr2char(0x23B8) : ' '
+	return lpad . rv . ' '
+endfunction
 
-	let bufnums = buftabline#user_buffers()
+let s:dirsep = fnamemodify(getcwd(),':p')[-1:]
+let s:centerbuf = winbufnr(0)
+function! buftabline#render()
 	let centerbuf = s:centerbuf " prevent tabline jumping around when non-user buffer current (e.g. help)
-
-	" pick up data on all the buffers
 	let tabs = []
 	let path_tabs = []
 	let tabs_per_tail = {}
 	let currentbuf = winbufnr(0)
-	let screen_num = 0
-	for bufnum in bufnums
-		let screen_num = show_num ? bufnum : show_ord ? screen_num + 1 : ''
-		let tab = { 'num': bufnum }
-		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
+	let ordnum = 0
+	for bufnum in buftabline#user_buffers()
+		let ordnum += 1
+		let tab = {
+		    \ 'num': bufnum,
+		    \ 'label': '',
+		    \ 'ordnum': ordnum,
+		    \ 'modified': getbufvar(bufnum, '&modified'),
+		    \ 'buftype': getbufvar(bufnum, '&buftype'),
+		    \ 'hilite': currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
+		    \ }
 		if currentbuf == bufnum | let [centerbuf, s:centerbuf] = [bufnum, bufnum] | endif
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
 			let tab.path = fnamemodify(bufpath, ':p:~:.')
 			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
 			let tab.label = tab.path[tab.sep + 1:]
-			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . screen_num
-			let tab.pre = strlen(pre) ? pre . ' ' : ''
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
 			let path_tabs += [tab]
-		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
-			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
-		else " unnamed file
-			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
-			\             . ( screen_num ? screen_num : '*' )
 		endif
 		let tabs += [tab]
 	endfor
@@ -104,8 +119,9 @@ function! buftabline#render()
 
 	" 2. sum the string lengths for the left and right halves
 	let currentside = lft
+	let formatter = get(g:, 'buftabline_format', 'buftabline#default_format')
 	for tab in tabs
-		let tab.label = lpad . get(tab, 'pre', '') . tab.label . ' '
+		execute printf('let tab.label = %s(tab)', formatter)
 		let tab.width = strwidth(strtrans(tab.label))
 		if centerbuf == tab.num
 			let halfwidth = tab.width / 2
@@ -141,8 +157,6 @@ function! buftabline#render()
 			let endtab.label = substitute(endtab.label, side.cut, side.indicator, '')
 		endfor
 	endif
-
-	if len(tabs) | let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '') | endif
 
 	let swallowclicks = '%'.(1 + tabpagenr('$')).'X'
 	return swallowclicks . join(map(tabs,'printf("%%#BufTabLine%s#%s",v:val.hilite,strtrans(v:val.label))'),'') . '%#BufTabLineFill#'
