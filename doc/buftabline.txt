@@ -87,6 +87,9 @@ map keys to the |<Plug>| mappings provided by this plugin: >
         nmap <leader>9 <Plug>BufTabLine.Go(9)
         nmap <leader>0 <Plug>BufTabLine.Go(10)
 <
+You can also add a mapping to go to the last buffer (as used in web browsers).: >
+        nmap <leader>9 <Plug>BufTabLine.Go(-1)
+<
 On Mac OS, you probably want to use a |<D-| mapping instead, which will emulate
 the standard Cmd+1, Cmd+2, etc. keybindings for this feature: >
         nmap <D-1> <Plug>BufTabLine.Go(1)
