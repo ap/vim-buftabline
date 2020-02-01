@@ -27,6 +27,11 @@ if v:version < 700
 	finish
 endif
 
+if exists('g:loadedBuftabline')
+	finish
+endif
+let g:loadedBuftabline = 1
+
 scriptencoding utf-8
 
 hi default link BufTabLineCurrent TabLineSel
