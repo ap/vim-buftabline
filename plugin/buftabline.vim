@@ -44,6 +44,12 @@ let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
 let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
 let g:buftabline_show       = get(g:, 'buftabline_show',       2)
 let g:buftabline_plug_max   = get(g:, 'buftabline_plug_max',  10)
+let g:buftabline_enabled    = get(g:, 'buftabline_enabled',    1)
+
+" This disables the plugin but loads configuration
+if !g:buftabline_enabled
+	finish
+endif
 
 augroup BufTabLine
 autocmd!
