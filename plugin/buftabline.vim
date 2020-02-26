@@ -53,10 +53,15 @@ endfunction
 let s:dirsep = fnamemodify(getcwd(),':p')[-1:]
 let s:centerbuf = winbufnr(0)
 function! buftabline#render()
+	return buftabline#renderWithWidth(&columns)
+endfunction
+
+function! buftabline#renderWithWidth(width)
 	let show_num = g:buftabline_numbers == 1
 	let show_ord = g:buftabline_numbers == 2
 	let show_mod = g:buftabline_indicators
 	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
+	let columns  = a:width
 
 	let bufnums = buftabline#user_buffers()
 	let centerbuf = s:centerbuf " prevent tabline jumping around when non-user buffer current (e.g. help)
@@ -105,8 +110,8 @@ function! buftabline#render()
 	" now keep the current buffer center-screen as much as possible:
 
 	" 1. setup
-	let lft = { 'lasttab':  0, 'cut':  '.', 'indicator': '<', 'width': 0, 'half': &columns / 2 }
-	let rgt = { 'lasttab': -1, 'cut': '.$', 'indicator': '>', 'width': 0, 'half': &columns - lft.half }
+	let lft = { 'lasttab':  0, 'cut':  '.', 'indicator': '<', 'width': 0, 'half': columns / 2 }
+	let rgt = { 'lasttab': -1, 'cut': '.$', 'indicator': '>', 'width': 0, 'half': columns - lft.half }
 
 	" 2. sum the string lengths for the left and right halves
 	let currentside = lft
@@ -128,10 +133,10 @@ function! buftabline#render()
 	endif
 
 	" 3. toss away tabs and pieces until all fits:
-	if ( lft.width + rgt.width ) > &columns
+	if ( lft.width + rgt.width ) > columns
 		let oversized
-		\ = lft.width < lft.half ? [ [ rgt, &columns - lft.width ] ]
-		\ : rgt.width < rgt.half ? [ [ lft, &columns - rgt.width ] ]
+		\ = lft.width < lft.half ? [ [ rgt, columns - lft.width ] ]
+		\ : rgt.width < rgt.half ? [ [ lft, columns - rgt.width ] ]
 		\ :                        [ [ lft, lft.half ], [ rgt, rgt.half ] ]
 		for [side, budget] in oversized
 			let delta = side.width - budget
