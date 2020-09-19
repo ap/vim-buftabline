@@ -170,6 +170,7 @@ autocmd!
 autocmd VimEnter  * call buftabline#update(0)
 autocmd TabEnter  * call buftabline#update(0)
 autocmd BufAdd    * call buftabline#update(0)
+autocmd FileType qf call buftabline#update(0)
 autocmd BufDelete * call buftabline#update(str2nr(expand('<abuf>')))
 augroup END
 
