@@ -44,8 +44,14 @@ function! buftabline#user_buffers() " help buffers are always unlisted, but quic
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 endfunction
 
+function! s:switch_buffer(bufnum, clicks, button, mod)
+	execute 'buffer' a:bufnum
+endfunction
+
 let s:dirsep = fnamemodify(getcwd(),':p')[-1:]
 let s:centerbuf = winbufnr(0)
+let s:tablineat = has('tablineat')
+let s:sid = expand('<SID>')
 function! buftabline#render()
 	let show_num = g:buftabline_numbers == 1
 	let show_ord = g:buftabline_numbers == 2
@@ -145,7 +151,9 @@ function! buftabline#render()
 	if len(tabs) | let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '') | endif
 
 	let swallowclicks = '%'.(1 + tabpagenr('$')).'X'
-	return swallowclicks . join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#'
+	return s:tablineat
+		\ ? join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . "%".v:val.num."@'.s:sid.'switch_buffer@" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#' . swallowclicks
+		\ : swallowclicks . join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#'
 endfunction
 
 function! buftabline#update(zombie)
