@@ -44,8 +44,8 @@ function! buftabline#user_buffers() " help buffers are always unlisted, but quic
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 endfunction
 
-function! Switch_buffer(minwid, clicks, button, mod)
-	execute 'buffer ' . a:minwid
+function! Switch_buffer(bufnum, clicks, button, mod)
+	execute 'buffer ' . a:bufnum
 endfunction
 
 let s:dirsep = fnamemodify(getcwd(),':p')[-1:]
@@ -68,7 +68,6 @@ function! buftabline#render()
 	for bufnum in bufnums
 		let screen_num = show_num ? bufnum : show_ord ? screen_num + 1 : ''
 		let tab = { 'num': bufnum }
-		" let tab.switch_func = function('<SID>switch_buffer', [tab.num])
 		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
 		if currentbuf == bufnum | let [centerbuf, s:centerbuf] = [bufnum, bufnum] | endif
 		let bufpath = bufname(bufnum)
@@ -150,7 +149,6 @@ function! buftabline#render()
 	if len(tabs) | let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '') | endif
 
 	" let swallowclicks = '%'.(1 + tabpagenr('$')).'X'
-	" return swallowclicks . join(map(tabs,'printf("%%#BufTabLine%s#@%s@%s%%X",v:val.hilite,v:val.switch_func, strtrans(v:val.label))'),'') . '%#BufTabLineFill#'
 	return join(map(tabs,'printf("%%#BufTabLine%s#%%%d@Switch_buffer@%s%%X",v:val.hilite, v:val.num, strtrans(v:val.label))'),'') . '%#BufTabLineFill#'
 endfunction
 
