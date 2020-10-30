@@ -44,7 +44,7 @@ function! buftabline#user_buffers() " help buffers are always unlisted, but quic
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 endfunction
 
-function! s:switch_buffer(bufnum, clicks, button, mod)
+function! buftabline#switch_buffer(bufnum, clicks, button, mod)
 	execute 'buffer' a:bufnum
 endfunction
 
@@ -152,7 +152,7 @@ function! buftabline#render()
 
 	let swallowclicks = '%'.(1 + tabpagenr('$')).'X'
 	return s:tablineat
-		\ ? join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . "%".v:val.num."@'.s:sid.'switch_buffer@" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#' . swallowclicks
+		\ ? join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . "%".v:val.num."@'.s:sid.'buftabline#switch_buffer@" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#' . swallowclicks
 		\ : swallowclicks . join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#'
 endfunction
 
