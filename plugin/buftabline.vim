@@ -48,10 +48,14 @@ function! s:switch_buffer(bufnum, clicks, button, mod)
 	execute 'buffer' a:bufnum
 endfunction
 
+function s:SID()
+	return matchstr(expand('<sfile>'), '<SNR>\d\+_')
+endfunction
+
 let s:dirsep = fnamemodify(getcwd(),':p')[-1:]
 let s:centerbuf = winbufnr(0)
 let s:tablineat = has('tablineat')
-let s:sid = expand('<SID>')
+let s:sid = s:SID() | delfunction s:SID
 function! buftabline#render()
 	let show_num = g:buftabline_numbers == 1
 	let show_ord = g:buftabline_numbers == 2
