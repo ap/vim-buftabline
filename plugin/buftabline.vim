@@ -114,9 +114,10 @@ function! buftabline#render()
 
 	" 2. sum the string lengths for the left and right halves
 	let currentside = lft
+	let lpad_width = strwidth(lpad)
 	for tab in tabs
-		let tab.label = lpad . tab.pre . tab.label . ' '
-		let tab.width = strwidth(strtrans(tab.label))
+		let tab.width = lpad_width + strwidth(tab.pre) + strwidth(tab.label) + 1
+		let tab.label = lpad . tab.pre . substitute(strtrans(tab.label), '%', '%%', 'g') . ' '
 		if centerbuf == tab.num
 			let halfwidth = tab.width / 2
 			let lft.width += halfwidth
