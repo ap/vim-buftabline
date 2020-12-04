@@ -73,7 +73,7 @@ function! buftabline#render()
 	let screen_num = 0
 	for bufnum in bufnums
 		let screen_num = show_num ? bufnum : show_ord ? screen_num + 1 : ''
-		let tab = { 'num': bufnum }
+		let tab = { 'num': bufnum, 'pre': '' }
 		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
 		if currentbuf == bufnum | let [centerbuf, s:centerbuf] = [bufnum, bufnum] | endif
 		let bufpath = bufname(bufnum)
@@ -82,7 +82,7 @@ function! buftabline#render()
 			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
 			let tab.label = tab.path[tab.sep + 1:]
 			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . screen_num
-			let tab.pre = strlen(pre) ? pre . ' ' : ''
+			if strlen(pre) | let tab.pre = pre . ' ' | endif
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
 			let path_tabs += [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
@@ -115,7 +115,7 @@ function! buftabline#render()
 	" 2. sum the string lengths for the left and right halves
 	let currentside = lft
 	for tab in tabs
-		let tab.label = lpad . get(tab, 'pre', '') . tab.label . ' '
+		let tab.label = lpad . tab.pre . tab.label . ' '
 		let tab.width = strwidth(strtrans(tab.label))
 		if centerbuf == tab.num
 			let halfwidth = tab.width / 2
