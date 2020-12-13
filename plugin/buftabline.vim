@@ -29,10 +29,10 @@ endif
 
 scriptencoding utf-8
 
-hi default link BufTabLineCurrent TabLineSel
-hi default link BufTabLineActive  PmenuSel
-hi default link BufTabLineHidden  TabLine
-hi default link BufTabLineFill    TabLineFill
+hi default link BufTabLineCurrent         TabLineSel
+hi default link BufTabLineActive          PmenuSel
+hi default link BufTabLineHidden          TabLine
+hi default link BufTabLineFill            TabLineFill
 
 let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
 let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)

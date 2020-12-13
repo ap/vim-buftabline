@@ -124,11 +124,11 @@ colorscheme for this plugin specifically.
 
 The highlight groups and their default links are as follows:
 
-    Custom group             Default link      Meaning
-    *BufTabLineCurrent*        |TabLineSel|        Buffer shown in current window
-    *BufTabLineActive*         |PmenuSel|          Buffer shown in other window
-    *BufTabLineHidden*         |TabLine|           Buffer not currently visible
-    *BufTabLineFill*           |TabLineFill|       Empty area
+Custom group                 Default link         Meaning
+*BufTabLineCurrent*            |TabLineSel|           Buffer shown in current window
+*BufTabLineActive*             |PmenuSel|             Buffer shown in other window
+*BufTabLineHidden*             |TabLine|              Buffer not currently visible
+*BufTabLineFill*               |TabLineFill|          Empty area
 
 
 ==============================================================================
