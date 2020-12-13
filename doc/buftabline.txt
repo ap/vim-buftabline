@@ -129,6 +129,9 @@ Custom group                 Default link         Meaning
 *BufTabLineActive*             |PmenuSel|             Buffer shown in other window
 *BufTabLineHidden*             |TabLine|              Buffer not currently visible
 *BufTabLineFill*               |TabLineFill|          Empty area
+*BufTabLineModifiedCurrent*    |BufTabLineCurrent|    (Same as linked but 'modified')
+*BufTabLineModifiedActive*     |BufTabLineActive|     (Same as linked but 'modified')
+*BufTabLineModifiedHidden*     |BufTabLineHidden|     (Same as linked but 'modified')
 
 
 ==============================================================================

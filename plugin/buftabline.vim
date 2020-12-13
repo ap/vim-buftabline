@@ -33,6 +33,9 @@ hi default link BufTabLineCurrent         TabLineSel
 hi default link BufTabLineActive          PmenuSel
 hi default link BufTabLineHidden          TabLine
 hi default link BufTabLineFill            TabLineFill
+hi default link BufTabLineModifiedCurrent BufTabLineCurrent
+hi default link BufTabLineModifiedActive  BufTabLineActive
+hi default link BufTabLineModifiedHidden  BufTabLineHidden
 
 let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
 let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
@@ -81,7 +84,11 @@ function! buftabline#render()
 			let tab.path = fnamemodify(bufpath, ':p:~:.')
 			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
 			let tab.label = tab.path[tab.sep + 1:]
-			let pre = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' ) . screen_num
+			let pre = screen_num
+			if getbufvar(bufnum, '&mod')
+				let tab.hilite = 'Modified' . tab.hilite
+				if show_mod | let pre = '+' . pre | endif
+			endif
 			if strlen(pre) | let tab.pre = pre . ' ' | endif
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
 			let path_tabs += [tab]
