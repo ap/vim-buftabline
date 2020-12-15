@@ -37,11 +37,12 @@ hi default link BufTabLineModifiedCurrent BufTabLineCurrent
 hi default link BufTabLineModifiedActive  BufTabLineActive
 hi default link BufTabLineModifiedHidden  BufTabLineHidden
 
-let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
-let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
-let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
-let g:buftabline_show       = get(g:, 'buftabline_show',       2)
-let g:buftabline_plug_max   = get(g:, 'buftabline_plug_max',  10)
+let g:buftabline_numbers        = get(g:, 'buftabline_numbers',    0)
+let g:buftabline_indicators     = get(g:, 'buftabline_indicators', 0)
+let g:buftabline_separators     = get(g:, 'buftabline_separators', 0)
+let g:buftabline_separator_char = get(g:, 'buftabline_separator_char', nr2char(0x23B8))
+let g:buftabline_show           = get(g:, 'buftabline_show',       2)
+let g:buftabline_plug_max       = get(g:, 'buftabline_plug_max',  10)
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -63,7 +64,7 @@ function! buftabline#render()
 	let show_num = g:buftabline_numbers == 1
 	let show_ord = g:buftabline_numbers == 2
 	let show_mod = g:buftabline_indicators
-	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
+	let lpad     = g:buftabline_separators ? g:buftabline_separator_char : ' '
 
 	let bufnums = buftabline#user_buffers()
 	let centerbuf = s:centerbuf " prevent tabline jumping around when non-user buffer current (e.g. help)
