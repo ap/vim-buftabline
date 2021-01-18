@@ -32,6 +32,8 @@ scriptencoding utf-8
 hi default link BufTabLineCurrent         TabLineSel
 hi default link BufTabLineActive          PmenuSel
 hi default link BufTabLineHidden          TabLine
+hi default link BufTabLineNum 			      BufTabLineCurrent
+hi default link BufTabLineIndicator       BufTabLineCurrent
 hi default link BufTabLineFill            TabLineFill
 hi default link BufTabLineModifiedCurrent BufTabLineCurrent
 hi default link BufTabLineModifiedActive  BufTabLineActive
@@ -76,7 +78,7 @@ function! buftabline#render()
 	let screen_num = 0
 	for bufnum in bufnums
 		let screen_num = show_num ? bufnum : show_ord ? screen_num + 1 : ''
-		let tab = { 'num': bufnum, 'pre': '' }
+		let tab = { 'num': bufnum, 'pre': '', 'idx': screen_num }
 		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
 		if currentbuf == bufnum | let [centerbuf, s:centerbuf] = [bufnum, bufnum] | endif
 		let bufpath = bufname(bufnum)
@@ -84,18 +86,19 @@ function! buftabline#render()
 			let tab.path = fnamemodify(bufpath, ':p:~:.')
 			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
 			let tab.label = tab.path[tab.sep + 1:]
-			let pre = screen_num
+			" let pre = screen_num
+			let pre = ''
 			if getbufvar(bufnum, '&mod')
 				let tab.hilite = 'Modified' . tab.hilite
-				if show_mod | let pre = '+' . pre | endif
+				if show_mod | let pre = '' . pre | endif
 			endif
-			if strlen(pre) | let tab.pre = pre . ' ' | endif
+			if strlen(pre) | let tab.pre = pre | endif
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
 			let path_tabs += [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
 		else " unnamed file
-			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
+			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '' : '' )
 			\             . ( screen_num ? screen_num : '*' )
 		endif
 		let tabs += [tab]
@@ -124,7 +127,7 @@ function! buftabline#render()
 	let lpad_width = strwidth(lpad)
 	for tab in tabs
 		let tab.width = lpad_width + strwidth(tab.pre) + strwidth(tab.label) + 1
-		let tab.label = lpad . tab.pre . substitute(strtrans(tab.label), '%', '%%', 'g') . ' '
+		let tab.label = lpad . '%#BufTabLineNum#' . tab.idx . ' %#BufTabLine' . tab.hilite . '#' . substitute(strtrans(tab.label), '%', '%%', 'g') . '%#BufTabLineIndicator#' . tab.pre . ' '
 		if centerbuf == tab.num
 			let halfwidth = tab.width / 2
 			let lft.width += halfwidth
