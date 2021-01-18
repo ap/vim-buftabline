@@ -166,8 +166,13 @@ function! buftabline#render()
 	if len(tabs) | let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '') | endif
 
 	let swallowclicks = '%'.(1 + tabpagenr('$')).'X'
+	let activeFilePath = ''
+	" Hide term path 'term:///'
+	if expand('%:~:.') !~ '^term:'
+		let activeFilePath = '%#BufTabLinePath#%=%{expand("%:~:.")} '
+	endif
 	return s:tablineat
-		\ ? join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . "%".v:val.num."@'.s:sid.'switch_buffer@" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#' . swallowclicks
+		\ ? join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . "%".v:val.num."@'.s:sid.'switch_buffer@" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#' . activeFilePath . swallowclicks
 		\ : swallowclicks . join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#'
 endfunction
 
