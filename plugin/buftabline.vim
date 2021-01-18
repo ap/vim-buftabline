@@ -73,6 +73,7 @@ function! buftabline#render()
 	let show_path = g:buftabline_path == 1
 	let show_ord  = g:buftabline_numbers == 2
 	let show_mod  = g:buftabline_indicators
+	let mod_char  = g:buftabline_indicators_char
 	let lpad      = g:buftabline_separators ? nr2char(0x23B8) : ' '
 
 	let bufnums = buftabline#user_buffers()
@@ -98,7 +99,7 @@ function! buftabline#render()
 			let pre = ''
 			if getbufvar(bufnum, '&mod')
 				let tab.hilite = 'Modified' . tab.hilite
-				if show_mod | let pre = get(g:, 'buftabline_indicators_char') . pre | endif
+				if show_mod | let pre = mod_char . pre | endif
 			endif
 			if strlen(pre) | let tab.pre = pre | endif
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
@@ -106,7 +107,7 @@ function! buftabline#render()
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
 		else " unnamed file
-			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? get(g:, 'buftabline_indicators_char') : '' )
+			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? mod_char : '' )
 			\             . ( screen_num ? screen_num : '*' )
 		endif
 		let tabs += [tab]
