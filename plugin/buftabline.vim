@@ -44,11 +44,12 @@ hi default link BufTabLineModifiedCurrent BufTabLineCurrent
 hi default link BufTabLineModifiedActive  BufTabLineActive
 hi default link BufTabLineModifiedHidden  BufTabLineHidden
 
-let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
-let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
-let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
-let g:buftabline_show       = get(g:, 'buftabline_show',       2)
-let g:buftabline_plug_max   = get(g:, 'buftabline_plug_max',  10)
+let g:buftabline_numbers    			= get(g:, 'buftabline_numbers',    0)
+let g:buftabline_indicators 			= get(g:, 'buftabline_indicators', 0)
+let g:buftabline_indicators_char  = get(g:, 'buftabline_indicators_char',  '+')
+let g:buftabline_separators 			= get(g:, 'buftabline_separators', 0)
+let g:buftabline_show       			= get(g:, 'buftabline_show',       2)
+let g:buftabline_plug_max   			= get(g:, 'buftabline_plug_max',  10)
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -95,7 +96,7 @@ function! buftabline#render()
 			let pre = ''
 			if getbufvar(bufnum, '&mod')
 				let tab.hilite = 'Modified' . tab.hilite
-				if show_mod | let pre = '' . pre | endif
+				if show_mod | let pre = get(g:, 'buftabline_indicators_char') . pre | endif
 			endif
 			if strlen(pre) | let tab.pre = pre | endif
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
@@ -103,7 +104,7 @@ function! buftabline#render()
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
 			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
 		else " unnamed file
-			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '' : '' )
+			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? get(g:, 'buftabline_indicators_char') : '' )
 			\             . ( screen_num ? screen_num : '*' )
 		endif
 		let tabs += [tab]
