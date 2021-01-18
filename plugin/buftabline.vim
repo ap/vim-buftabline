@@ -32,8 +32,13 @@ scriptencoding utf-8
 hi default link BufTabLineCurrent         TabLineSel
 hi default link BufTabLineActive          PmenuSel
 hi default link BufTabLineHidden          TabLine
-hi default link BufTabLineNum 			      BufTabLineCurrent
-hi default link BufTabLineIndicator       BufTabLineCurrent
+hi default link BufTabLineNumCurrent 			BufTabLineCurrent
+hi default link BufTabLineNumActive 			BufTabLineActive
+hi default link BufTabLineNumHidden 			BufTabLineHidden
+hi default link BufTabLineModCurrent      BufTabLineCurrent
+hi default link BufTabLineModActive       BufTabLineActive
+hi default link BufTabLineModHidden       BufTabLineHidden
+hi default link BufTabLinePath            BufTabLineCurrent
 hi default link BufTabLineFill            TabLineFill
 hi default link BufTabLineModifiedCurrent BufTabLineCurrent
 hi default link BufTabLineModifiedActive  BufTabLineActive
@@ -127,7 +132,7 @@ function! buftabline#render()
 	let lpad_width = strwidth(lpad)
 	for tab in tabs
 		let tab.width = lpad_width + strwidth(tab.pre) + strwidth(tab.label) + 1
-		let tab.label = lpad . '%#BufTabLineNum#' . tab.idx . ' %#BufTabLine' . tab.hilite . '#' . substitute(strtrans(tab.label), '%', '%%', 'g') . '%#BufTabLineIndicator#' . tab.pre . ' '
+		let tab.label = lpad . '%#BufTabLineNum' . tab.hilite . '#' . tab.idx . ' %#BufTabLine' . tab.hilite . '#' . substitute(strtrans(tab.label), '%', '%%', 'g') . '%#BufTabLineMod' . tab.hilite . '#' . tab.pre . ' '
 		if centerbuf == tab.num
 			let halfwidth = tab.width / 2
 			let lft.width += halfwidth
