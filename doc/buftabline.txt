@@ -52,15 +52,23 @@ effect immediately unless you force an update: >
 *g:buftabline_indicators*    boolean (default off)
 
     When on, the buffer's state is indicated in the buffer label. Currently
-    the only state indicated is whether the buffer is 'modified'.
+    it indicates whether the buffer is 'modified' or/and is 'readonly'.
 
 
-*g:buftabline_separators*    boolean (default off)
+*g:buftabline_indicators_mod*    string (default '+')
 
-    When on, a vertical line is drawn inbetween tabs. (This is not strictly
-    correct. The effect is actually achieved by replacing the space on the
-    left side of each tab with U+23B8 LEFT VERTICAL BOX LINE. Therefore the
-    separator will be highlighted the same way as the tab to its left.)
+    What to display when a buffer is 'modified'
+
+
+*g:buftabline_indicators_ro*    string (default '-')
+
+    What to display when a buffer is 'readonly'
+
+
+*g:buftabline_path*           boolean (default off)
+
+    When on, the buffer's relative file path to the working directory is
+    indicated on the right of the tabline
 
 
 *g:buftabline_plug_max*      number (default 10)
@@ -124,14 +132,23 @@ colorscheme for this plugin specifically.
 
 The highlight groups and their default links are as follows:
 
-Custom group                 Default link         Meaning
-*BufTabLineCurrent*            |TabLineSel|           Buffer shown in current window
-*BufTabLineActive*             |PmenuSel|             Buffer shown in other window
-*BufTabLineHidden*             |TabLine|              Buffer not currently visible
-*BufTabLineFill*               |TabLineFill|          Empty area
-*BufTabLineModifiedCurrent*    |BufTabLineCurrent|    (Same as linked but 'modified')
-*BufTabLineModifiedActive*     |BufTabLineActive|     (Same as linked but 'modified')
-*BufTabLineModifiedHidden*     |BufTabLineHidden|     (Same as linked but 'modified')
+Custom group                  Default link         Meaning
+*BufTabLineCurrent*             |TabLineSel|           Buffer shown in current window
+*BufTabLineActive*              |PmenuSel|             Buffer shown in other window
+*BufTabLineHidden*              |TabLine|              Buffer not currently visible
+*BufTabLineFill*                |TabLineFill|          Empty area
+*BufTabLineModifiedCurrent*     |BufTabLineCurrent|    (Same as linked but 'modified')
+*BufTabLineModifiedActive*      |BufTabLineActive|     (Same as linked but 'modified')
+*BufTabLineModifiedHidden*      |BufTabLineHidden|     (Same as linked but 'modified')
+BufTabLineNumCurrent 			    BufTabLineCurrent     Buffer number
+BufTabLineNumActive 			    BufTabLineActive      (same as buffer's)
+BufTabLineNumHidden 			    BufTabLineHidden      (same as buffer's)
+BufTabLineNumModifiedCurrent  BufTabLineNumCurrent       (same as buffer's)
+BufTabLineNumModifiedActive   BufTabLineNumActive      (same as buffer's)
+BufTabLineNumModifiedHidden   BufTabLineNumHidden      (same as buffer's)
+BufTabLineCharModifiedCurrent BufTabLineModifiedCurrent    Buffer indicator
+BufTabLineCharModifiedActive  BufTabLineModifiedActive      (same as buffer's)
+BufTabLineCharModifiedHidden  BufTabLineModifiedHidden      (same as buffer's)
 
 
 ==============================================================================
