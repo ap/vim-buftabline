@@ -140,15 +140,15 @@ Custom group                  Default link         Meaning
 *BufTabLineModifiedCurrent*     |BufTabLineCurrent|    (Same as linked but 'modified')
 *BufTabLineModifiedActive*      |BufTabLineActive|     (Same as linked but 'modified')
 *BufTabLineModifiedHidden*      |BufTabLineHidden|     (Same as linked but 'modified')
-BufTabLineNumCurrent 			    BufTabLineCurrent     Buffer number
-BufTabLineNumActive 			    BufTabLineActive      (same as buffer's)
-BufTabLineNumHidden 			    BufTabLineHidden      (same as buffer's)
-BufTabLineNumModifiedCurrent  BufTabLineNumCurrent       (same as buffer's)
-BufTabLineNumModifiedActive   BufTabLineNumActive      (same as buffer's)
-BufTabLineNumModifiedHidden   BufTabLineNumHidden      (same as buffer's)
-BufTabLineCharModifiedCurrent BufTabLineModifiedCurrent    Buffer indicator
-BufTabLineCharModifiedActive  BufTabLineModifiedActive      (same as buffer's)
-BufTabLineCharModifiedHidden  BufTabLineModifiedHidden      (same as buffer's)
+*BufTabLineNumCurrent* 			  |BufTabLineCurrent|           Buffer number
+*BufTabLineNumActive* 			  |BufTabLineActive|            (same as buffer's)
+*BufTabLineNumHidden* 			  |BufTabLineHidden|            (same as buffer's)
+*BufTabLineNumModifiedCurrent*  |BufTabLineNumCurrent|        (same as buffer's)
+*BufTabLineNumModifiedActive*   |BufTabLineNumActive|         (same as buffer's)
+*BufTabLineNumModifiedHidden*   |BufTabLineNumHidden|         (same as buffer's)
+*BufTabLineCharModifiedCurrent* |BufTabLineModifiedCurrent|   Buffer indicator
+*BufTabLineCharModifiedActive*  |BufTabLineModifiedActive|    (same as buffer's)
+*BufTabLineCharModifiedHidden*  |BufTabLineModifiedHidden|    (same as buffer's)
 
 
 ==============================================================================
