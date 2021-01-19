@@ -65,6 +65,14 @@ effect immediately unless you force an update: >
     What to display when a buffer is 'readonly'
 
 
+*g:buftabline_separators*    boolean (default off)
+
+    When on, a vertical line is drawn inbetween tabs. (This is not strictly
+    correct. The effect is actually achieved by replacing the space on the
+    left side of each tab with U+23B8 LEFT VERTICAL BOX LINE. Therefore the
+    separator will be highlighted the same way as the tab to its left.)
+
+
 *g:buftabline_path*           boolean (default off)
 
     When on, the buffer's relative file path to the working directory is
