@@ -103,7 +103,7 @@ function! buftabline#render()
 			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
 			let tab.label = tab.path[tab.sep + 1:]
 			if show_icon && exists("*WebDevIconsGetFileTypeSymbol")
-				let tab.label = WebDevIconsGetFileTypeSymbol(tab.path) . tab.label . ' ' 
+				let tab.label = WebDevIconsGetFileTypeSymbol(tab.path) . ' ' . tab.label 
 			endif
 			" let pre = screen_num
 			let pre = ''
