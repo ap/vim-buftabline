@@ -48,6 +48,7 @@ hi default link BufTabLineCharModifiedActive  BufTabLineModifiedActive
 hi default link BufTabLineCharModifiedHidden  BufTabLineModifiedHidden
 
 let g:buftabline_numbers    			= get(g:, 'buftabline_numbers',    0)
+let g:buftabline_icons      			= get(g:, 'buftabline_icons', 0)
 let g:buftabline_indicators 			= get(g:, 'buftabline_indicators', 0)
 let g:buftabline_indicators_mod  	= get(g:, 'buftabline_indicators_mod',  '+')
 let g:buftabline_indicators_ro 	 	= get(g:, 'buftabline_indicators_ro',  '-')
@@ -77,6 +78,7 @@ function! buftabline#render()
 	let show_path = g:buftabline_path == 1
 	let show_ord  = g:buftabline_numbers == 2
 	let show_idc  = g:buftabline_indicators
+	let show_icon = g:buftabline_icons
 	let mod_char  = g:buftabline_indicators_mod
 	let ro_char   = g:buftabline_indicators_ro
 	let lpad      = g:buftabline_separators ? nr2char(0x23B8) : ' '
@@ -98,9 +100,9 @@ function! buftabline#render()
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
 			let tab.path = fnamemodify(bufpath, ':p:~:.')
+			let tab.ftp = fnamemodify(bufpath, ':e')
 			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
 			let tab.label = tab.path[tab.sep + 1:]
-			" let pre = screen_num
 			let pre = ''
 			let mod = getbufvar(bufnum, '&mod')
 			let ro = getbufvar(bufnum, '&ro')
@@ -143,11 +145,17 @@ function! buftabline#render()
 	let lpad_width = strwidth(lpad)
 	for tab in tabs
 		let tab.width = lpad_width + strwidth(tab.pre) + strwidth(tab.label) + 1
-		let tab.label = lpad . '%#BufTabLineNum' . tab.hilite . '#' . tab.idx . ' %#BufTabLine' . tab.hilite . '#' . substitute(strtrans(tab.label), '%', '%%', 'g')
+		let current = tab.hilite =~ 'Current$' 
+		if show_icon && exists("*WebDevIconsGetFileTypeSymbol")
+			let icon = (current ? ' %#buftablineIcon_'. tab.ftp : ' %#BufTabLineActive') . '#' . WebDevIconsGetFileTypeSymbol(tab.path)
+			let tab.label = lpad . '%#BufTabLineNum' . tab.hilite . '#' . tab.idx . icon . ' %#BufTabLine' . tab.hilite . '#' . substitute(strtrans(tab.label), '%', '%%', 'g')
+			" let tab.label = lpad . '%#BufTabLineNum' . tab.hilite . '#' . tab.idx . ' %#BufTabLine' . tab.hilite . '#' . (show_icon && exists("*WebDevIconsGetFileTypeSymbol") ? WebDevIconsGetFileTypeSymbol(tab.path).' ' : '') . substitute(strtrans(tab.label), '%', '%%', 'g')
+		else
+			let tab.label = lpad . '%#BufTabLineNum' . tab.hilite . '#' . tab.idx . ' %#BufTabLine' . tab.hilite . '#' . substitute(strtrans(tab.label), '%', '%%', 'g')
+		endif
 		if strlen(tab.pre)
 			let tab.label = tab.label . '%#BufTabLineChar' . tab.hilite . '#' . tab.pre
 		endif
-		let tab.label = tab.label . ' '
 
 		if centerbuf == tab.num
 			let halfwidth = tab.width / 2
