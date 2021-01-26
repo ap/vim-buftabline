@@ -100,16 +100,27 @@ function! buftabline#render()
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
 			let tab.path = fnamemodify(bufpath, ':p:~:.')
-			let tab.ftp = fnamemodify(bufpath, ':e')
+			let tab.ftp = 'default'
 			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
 			let tab.label = tab.path[tab.sep + 1:]
 			let pre = ''
+
+			" TODO: classify by '.<extension>'
+			let ftp = utils#getftp(tab.path)
+			if ftp == ''
+				let ftp = getbufvar(bufnum, '&ft')
+				if ftp == ''
+					let ftp = 'default'
+				endif
+			endif
+
 			let mod = getbufvar(bufnum, '&mod')
 			let ro = getbufvar(bufnum, '&ro')
 			if mod || ro
 				let tab.hilite = 'Modified' . tab.hilite
 				if show_idc | let pre = (ro ? ro_char : '') . (mod ? mod_char : '') | endif
 			endif
+			if strlen(ftp) | let tab.ftp = ftp | endif
 			if strlen(pre) | let tab.pre = pre | endif
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
 			let path_tabs += [tab]
