@@ -121,7 +121,7 @@ let s:file_extension_colors = {
   \ 'vue'          : '8dc149',
   \ 'elm'          : 'ffffff',
   \ 'swift'        : 'e37933',
-  \ 'docker'       : '519aba',
+  \ 'dockerfile'   : '519aba',
   \ 'git'          : 'e37933',
   \ 'license'      : 'cbcb41',
   \ 'xcplayground' : 'd4843e'
