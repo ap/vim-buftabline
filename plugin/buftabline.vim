@@ -32,16 +32,30 @@ scriptencoding utf-8
 hi default link BufTabLineCurrent         TabLineSel
 hi default link BufTabLineActive          PmenuSel
 hi default link BufTabLineHidden          TabLine
+hi default link BufTabLinePath            BufTabLineCurrent
 hi default link BufTabLineFill            TabLineFill
 hi default link BufTabLineModifiedCurrent BufTabLineCurrent
 hi default link BufTabLineModifiedActive  BufTabLineActive
 hi default link BufTabLineModifiedHidden  BufTabLineHidden
+hi default link BufTabLineNumCurrent 			BufTabLineCurrent
+hi default link BufTabLineNumActive 			BufTabLineActive
+hi default link BufTabLineNumHidden 			BufTabLineHidden
+hi default link BufTabLineNumModifiedCurrent BufTabLineNumCurrent
+hi default link BufTabLineNumModifiedActive  BufTabLineNumActive
+hi default link BufTabLineNumModifiedHidden  BufTabLineNumHidden
+hi default link BufTabLineCharModifiedCurrent BufTabLineModifiedCurrent
+hi default link BufTabLineCharModifiedActive  BufTabLineModifiedActive
+hi default link BufTabLineCharModifiedHidden  BufTabLineModifiedHidden
 
-let g:buftabline_numbers    = get(g:, 'buftabline_numbers',    0)
-let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
-let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
-let g:buftabline_show       = get(g:, 'buftabline_show',       2)
-let g:buftabline_plug_max   = get(g:, 'buftabline_plug_max',  10)
+let g:buftabline_numbers    			= get(g:, 'buftabline_numbers',    0)
+let g:buftabline_icons      			= get(g:, 'buftabline_icons', 0)
+let g:buftabline_indicators 			= get(g:, 'buftabline_indicators', 0)
+let g:buftabline_indicators_mod  	= get(g:, 'buftabline_indicators_mod',  '+')
+let g:buftabline_indicators_ro 	 	= get(g:, 'buftabline_indicators_ro',  '-')
+let g:buftabline_path 						= get(g:, 'buftabline_path', 0)
+let g:buftabline_separators 			= get(g:, 'buftabline_separators', 0)
+let g:buftabline_show       			= get(g:, 'buftabline_show',       2)
+let g:buftabline_plug_max   			= get(g:, 'buftabline_plug_max',  10)
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -60,10 +74,14 @@ let s:centerbuf = winbufnr(0)
 let s:tablineat = has('tablineat')
 let s:sid = s:SID() | delfunction s:SID
 function! buftabline#render()
-	let show_num = g:buftabline_numbers == 1
-	let show_ord = g:buftabline_numbers == 2
-	let show_mod = g:buftabline_indicators
-	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
+	let show_num  = g:buftabline_numbers == 1
+	let show_path = g:buftabline_path == 1
+	let show_ord  = g:buftabline_numbers == 2
+	let show_idc  = g:buftabline_indicators
+	let show_icon = g:buftabline_icons
+	let mod_char  = g:buftabline_indicators_mod
+	let ro_char   = g:buftabline_indicators_ro
+	let lpad      = g:buftabline_separators ? nr2char(0x23B8) : ' '
 
 	let bufnums = buftabline#user_buffers()
 	let centerbuf = s:centerbuf " prevent tabline jumping around when non-user buffer current (e.g. help)
@@ -76,27 +94,34 @@ function! buftabline#render()
 	let screen_num = 0
 	for bufnum in bufnums
 		let screen_num = show_num ? bufnum : show_ord ? screen_num + 1 : ''
-		let tab = { 'num': bufnum, 'pre': '' }
+		let tab = { 'num': bufnum, 'pre': '', 'idx': screen_num }
 		let tab.hilite = currentbuf == bufnum ? 'Current' : bufwinnr(bufnum) > 0 ? 'Active' : 'Hidden'
 		if currentbuf == bufnum | let [centerbuf, s:centerbuf] = [bufnum, bufnum] | endif
 		let bufpath = bufname(bufnum)
 		if strlen(bufpath)
 			let tab.path = fnamemodify(bufpath, ':p:~:.')
+			let tab.ftp = 'default'
 			let tab.sep = strridx(tab.path, s:dirsep, strlen(tab.path) - 2) " keep trailing dirsep
 			let tab.label = tab.path[tab.sep + 1:]
-			let pre = screen_num
-			if getbufvar(bufnum, '&mod')
+			let pre = ''
+
+			let ftp = buftabline#util#getftp(tab.path)
+
+			let mod = getbufvar(bufnum, '&mod')
+			let ro = getbufvar(bufnum, '&ro')
+			if mod || ro
 				let tab.hilite = 'Modified' . tab.hilite
-				if show_mod | let pre = '+' . pre | endif
+				if show_idc | let pre = (ro ? ro_char : '') . (mod ? mod_char : '') | endif
 			endif
-			if strlen(pre) | let tab.pre = pre . ' ' | endif
+			if strlen(ftp) | let tab.ftp = ftp | endif
+			if strlen(pre) | let tab.pre = pre | endif
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
 			let path_tabs += [tab]
 		elseif -1 < index(['nofile','acwrite'], getbufvar(bufnum, '&buftype')) " scratch buffer
-			let tab.label = ( show_mod ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
+			let tab.label = ( show_idc ? '!' . screen_num : screen_num ? screen_num . ' !' : '!' )
 		else " unnamed file
-			let tab.label = ( show_mod && getbufvar(bufnum, '&mod') ? '+' : '' )
-			\             . ( screen_num ? screen_num : '*' )
+			let tab.label = ( screen_num ? screen_num : '*' )
+			\             . ( show_idc && getbufvar(bufnum, '&mod') ? mod_char : '' )
 		endif
 		let tabs += [tab]
 	endfor
@@ -124,7 +149,18 @@ function! buftabline#render()
 	let lpad_width = strwidth(lpad)
 	for tab in tabs
 		let tab.width = lpad_width + strwidth(tab.pre) + strwidth(tab.label) + 1
-		let tab.label = lpad . tab.pre . substitute(strtrans(tab.label), '%', '%%', 'g') . ' '
+		let current = tab.hilite =~ 'Current$' 
+		if show_icon && exists("*WebDevIconsGetFileTypeSymbol")
+			let icon = (current ? ' %#buftablineIcon_'. tab.ftp : ' %#BufTabLineActive') . '#' . WebDevIconsGetFileTypeSymbol(tab.path)
+			let tab.label = lpad . '%#BufTabLineNum' . tab.hilite . '#' . tab.idx . icon . ' %#BufTabLine' . tab.hilite . '#' . substitute(strtrans(tab.label), '%', '%%', 'g')
+			" let tab.label = lpad . '%#BufTabLineNum' . tab.hilite . '#' . tab.idx . ' %#BufTabLine' . tab.hilite . '#' . (show_icon && exists("*WebDevIconsGetFileTypeSymbol") ? WebDevIconsGetFileTypeSymbol(tab.path).' ' : '') . substitute(strtrans(tab.label), '%', '%%', 'g')
+		else
+			let tab.label = lpad . '%#BufTabLineNum' . tab.hilite . '#' . tab.idx . ' %#BufTabLine' . tab.hilite . '#' . substitute(strtrans(tab.label), '%', '%%', 'g')
+		endif
+		if strlen(tab.pre)
+			let tab.label = tab.label . '%#BufTabLineChar' . tab.hilite . '#' . tab.pre
+		endif
+
 		if centerbuf == tab.num
 			let halfwidth = tab.width / 2
 			let lft.width += halfwidth
@@ -163,8 +199,13 @@ function! buftabline#render()
 	if len(tabs) | let tabs[0].label = substitute(tabs[0].label, lpad, ' ', '') | endif
 
 	let swallowclicks = '%'.(1 + tabpagenr('$')).'X'
+	let activeFilePath = ''
+	" Hide term path 'term:///'
+	if show_path && expand('%:~:.') !~ '^term:'
+		let activeFilePath = '%#BufTabLinePath#%=%{expand("%:~:.")} '
+	endif
 	return s:tablineat
-		\ ? join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . "%".v:val.num."@'.s:sid.'switch_buffer@" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#' . swallowclicks
+		\ ? join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . "%".v:val.num."@'.s:sid.'switch_buffer@" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#' . activeFilePath . swallowclicks
 		\ : swallowclicks . join(map(tabs,'"%#BufTabLine".v:val.hilite."#" . strtrans(v:val.label)'),'') . '%#BufTabLineFill#'
 endfunction
 
