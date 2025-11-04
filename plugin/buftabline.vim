@@ -58,6 +58,7 @@ endfunction
 let s:dirsep = fnamemodify(getcwd(),':p')[-1:]
 let s:centerbuf = winbufnr(0)
 let s:tablineat = has('tablineat')
+let s:guioptions = exists('+guioptions')
 let s:sid = s:SID() | delfunction s:SID
 function! buftabline#render()
 	let show_num = g:buftabline_numbers == 1
@@ -170,8 +171,12 @@ endfunction
 
 function! buftabline#update(zombie)
 	set tabline=
-	if tabpagenr('$') > 1 | set guioptions+=e showtabline=2 | return | endif
-	set guioptions-=e
+	if tabpagenr('$') > 1
+		if s:guioptions | set guioptions+=e | endif
+		set showtabline=2
+		return
+	endif
+	if s:guioptions | set guioptions-=e | endif
 	if 0 == g:buftabline_show
 		set showtabline=1
 		return
