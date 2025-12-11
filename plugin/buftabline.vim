@@ -170,8 +170,11 @@ endfunction
 
 function! buftabline#update(zombie)
 	set tabline=
-	if tabpagenr('$') > 1 | set guioptions+=e showtabline=2 | return | endif
-	set guioptions-=e
+	" silent! is used here because neovim lacks guioptions and v0.11.0 broke backcompat
+	" by making setting it an E519 unsupported error instead of the previous no-op
+	" N.B. :set processes options in order and will abort on error even under silent!
+	if tabpagenr('$') > 1 | silent! set showtabline=2 guioptions+=e | return | endif
+	silent! set guioptions-=e
 	if 0 == g:buftabline_show
 		set showtabline=1
 		return
