@@ -27,6 +27,11 @@ if v:version < 700
 	finish
 endif
 
+if exists('g:loadedBuftabline')
+	finish
+endif
+let g:loadedBuftabline = 1
+
 scriptencoding utf-8
 
 hi default link BufTabLineCurrent         TabLineSel
@@ -42,6 +47,7 @@ let g:buftabline_indicators = get(g:, 'buftabline_indicators', 0)
 let g:buftabline_separators = get(g:, 'buftabline_separators', 0)
 let g:buftabline_show       = get(g:, 'buftabline_show',       2)
 let g:buftabline_plug_max   = get(g:, 'buftabline_plug_max',  10)
+let g:buftabline_enabled    = get(g:, 'buftabline_enabled',    1)
 
 function! buftabline#user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -60,10 +66,15 @@ let s:centerbuf = winbufnr(0)
 let s:tablineat = has('tablineat')
 let s:sid = s:SID() | delfunction s:SID
 function! buftabline#render()
+	return buftabline#renderWithWidth(&columns)
+endfunction
+
+function! buftabline#renderWithWidth(width)
 	let show_num = g:buftabline_numbers == 1
 	let show_ord = g:buftabline_numbers == 2
 	let show_mod = g:buftabline_indicators
 	let lpad     = g:buftabline_separators ? nr2char(0x23B8) : ' '
+	let columns  = a:width
 
 	let bufnums = buftabline#user_buffers()
 	let centerbuf = s:centerbuf " prevent tabline jumping around when non-user buffer current (e.g. help)
@@ -116,8 +127,8 @@ function! buftabline#render()
 	" now keep the current buffer center-screen as much as possible:
 
 	" 1. setup
-	let lft = { 'lasttab':  0, 'cut':  '.', 'indicator': '<', 'width': 0, 'half': &columns / 2 }
-	let rgt = { 'lasttab': -1, 'cut': '.$', 'indicator': '>', 'width': 0, 'half': &columns - lft.half }
+	let lft = { 'lasttab':  0, 'cut':  '.', 'indicator': '<', 'width': 0, 'half': columns / 2 }
+	let rgt = { 'lasttab': -1, 'cut': '.$', 'indicator': '>', 'width': 0, 'half': columns - lft.half }
 
 	" 2. sum the string lengths for the left and right halves
 	let currentside = lft
@@ -140,10 +151,10 @@ function! buftabline#render()
 	endif
 
 	" 3. toss away tabs and pieces until all fits:
-	if ( lft.width + rgt.width ) > &columns
+	if ( lft.width + rgt.width ) > columns
 		let oversized
-		\ = lft.width < lft.half ? [ [ rgt, &columns - lft.width ] ]
-		\ : rgt.width < rgt.half ? [ [ lft, &columns - rgt.width ] ]
+		\ = lft.width < lft.half ? [ [ rgt, columns - lft.width ] ]
+		\ : rgt.width < rgt.half ? [ [ lft, columns - rgt.width ] ]
 		\ :                        [ [ lft, lft.half ], [ rgt, rgt.half ] ]
 		for [side, budget] in oversized
 			let delta = side.width - budget
@@ -187,6 +198,11 @@ function! buftabline#update(zombie)
 	endif
 	set tabline=%!buftabline#render()
 endfunction
+
+" This disables the plugin but loads configuration
+if !g:buftabline_enabled
+	finish
+endif
 
 augroup BufTabLine
 autocmd!
